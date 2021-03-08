@@ -2,10 +2,24 @@
 <html lang="en">
   <head>
     <title>VVA Management Console</title>
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+    <!-- Style Sheets -->
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <script src="./src/index.js" type="text/jsx"></script>
     <div id="root"></div>
+    
+    <!-- JavaScript from CDN for interfacing with ROS -->
+    <script type="text/javascript" src="https://static.robotwebtools.org/EaselJS/current/easeljs.min.js"></script>
+    <script type="text/javascript" src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script type="text/javascript" src="https://static.robotwebtools.org/ros2djs/current/ros2d.min.js"></script>
+    <script type="text/javascript" src="https://static.robotwebtools.org/nav2djs/current/nav2d.min.js"></script>
+
+    <!-- React JavaScript -->
+    <script src="./src/index.js" type="text/jsx"></script>
   </body>
 </html>

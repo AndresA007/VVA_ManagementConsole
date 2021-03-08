@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import respBreakpoint from "../responsive"
-import HeaderDesktop from "./Header/HeaderDesktop";
-import HeaderMobile from "./Header/HeaderMobile";
+import Body from "./Body/Body";
+import Header from "./Header/Header";
 
 function App() {
   const [windowWidth, setWindowWidth] = useState(0);
@@ -10,17 +10,26 @@ function App() {
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
-  });
+  }, []);
 
   function updateDimensions() {
     const width = window.innerWidth;
     setWindowWidth(width);
   }
 
+  const isMobile = windowWidth < respBreakpoint;
+
   return (
     <div>
-      {windowWidth > respBreakpoint ? <HeaderDesktop /> : <HeaderMobile />}
-      {windowWidth > respBreakpoint ? <h3>On Desktop</h3> : <h1>On mobile</h1>}
+      <Header
+        title="Map construction"
+        subtitle="Current robot: ROBOT 1"
+        mobile={isMobile}
+      />
+      <Body
+        mobile={isMobile}
+      />
+
     </div>
   );
 }
