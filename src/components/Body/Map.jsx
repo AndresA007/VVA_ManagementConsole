@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-function Map() {
+function Map(props) {
   const [isConnected, setConnected] = useState(true);
+
+  const rosbridgeServerAddress = props.rosbridgeServerAddress;
 
   useEffect(() => {
     // Connect to ROS.
     var ros = new window.ROSLIB.Ros({
-      url : 'ws://192.168.0.12:9090'
+      url : rosbridgeServerAddress
     });
     
     ros.on('connection', () => {
@@ -15,17 +17,21 @@ function Map() {
 
       // Create the main viewer.
       var viewer = new window.ROS2D.Viewer({
-        divID : 'nav',
+        divID : 'map',
         width : window.innerWidth,
         height : window.innerHeight
       });
       
-      // Setup the nav client.
-      var nav = window.NAV2D.OccupancyGridClientNav({
+      // Setup the map client.
+      var gridClient = new window.ROS2D.OccupancyGridClient({
         ros : ros,
-        rootObject : viewer.scene,
-        viewer : viewer,
-        serverName : '/pr2_move_base'
+        rootObject : viewer.scene
+      });
+
+      // Scale the canvas to fit to the map
+      gridClient.on('change', () => {
+        viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
+        viewer.shift(-gridClient.currentGrid.width/2, -gridClient.currentGrid.height/2);
       });
     });
     
@@ -38,7 +44,7 @@ function Map() {
       console.log('Connection to websocket server closed.');
     });
     
-  }, []);
+  }, [rosbridgeServerAddress]);
 
   const styles = {
     errorMessage: {
@@ -52,10 +58,10 @@ function Map() {
   };
   
   return (
-    <div id="nav">
+    <div id="map">
       {!isConnected && 
         <div style={styles.errorMessage}>
-          <h1>Connection to rosbridge_server failed</h1>
+          <h1>Connection to rosbridge_server ({rosbridgeServerAddress}) failed</h1>
         </div>}
     </div>
   )

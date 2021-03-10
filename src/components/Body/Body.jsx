@@ -1,4 +1,6 @@
 import React from "react";
+import ArrowsPad from "./ArrowsPad";
+import LiveVideo from "./LiveVideo";
 import Map from "./Map";
 
 function Body(props) {
@@ -21,7 +23,9 @@ function Body(props) {
 
   const mobileBody = () => (
     <div>
-      <Map />
+      <Map rosbridgeServerAddress="ws://192.168.0.12:9090" />
+      <LiveVideo webVideoServerAddress="192.168.0.12" imageWidth="448" imageHeight="336" />
+      <ArrowsPad />
     </div>
   );
 

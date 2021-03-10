@@ -8,13 +8,13 @@ function Header(props) {
         fontSize: "3rem",
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
         textAlign: "center",
-        backgroundColor: "#52616b",
-        color: "#f0f5f9"
+        backgroundColor: "#f4f9f9",
+        color: "#303030"
       },
       subtitle: {
         fontSize: "2.5rem",
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-        color: "#a0a5a9",
+        color: "#a4ebf3",
         margin: "3% 1%",
         position: "absolute"
       },

@@ -11,7 +11,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 const useStyles = makeStyles((theme) => ({
   menuButton: {
     fontSize: "4rem",
-    color: "#a0a5a9"
+    color: "#a4ebf3"
   },
   drawer: {
     width: "50%"
