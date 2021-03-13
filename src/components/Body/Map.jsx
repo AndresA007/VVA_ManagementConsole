@@ -1,70 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-function Map(props) {
-  const [isConnected, setConnected] = useState(true);
+export default function Map(props) {
 
-  const rosbridgeServerAddress = props.rosbridgeServerAddress;
-
+  // Hooks
   useEffect(() => {
-    // Connect to ROS.
-    var ros = new window.ROSLIB.Ros({
-      url : rosbridgeServerAddress
+    // Create the main viewer.
+    let viewer = new window.ROS2D.Viewer({
+      divID : 'map',
+      width : window.innerWidth,
+      height : window.innerHeight
     });
     
-    ros.on('connection', () => {
-      setConnected(true);
-      console.log('Connected to websocket server.');
+    // Setup the map client.
+    let gridClient = new window.ROS2D.OccupancyGridClient({
+      ros : props.rosConnection,
+      rootObject : viewer.scene
+    });
+    
+    // Scale the canvas to fit to the map
+    gridClient.on('change', () => {
+      viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
+      viewer.shift(-gridClient.currentGrid.width/2, -gridClient.currentGrid.height/2);
+    });
+  }, [props.rosConnection]);
 
-      // Create the main viewer.
-      var viewer = new window.ROS2D.Viewer({
-        divID : 'map',
-        width : window.innerWidth,
-        height : window.innerHeight
-      });
-      
-      // Setup the map client.
-      var gridClient = new window.ROS2D.OccupancyGridClient({
-        ros : ros,
-        rootObject : viewer.scene
-      });
-
-      // Scale the canvas to fit to the map
-      gridClient.on('change', () => {
-        viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
-        viewer.shift(-gridClient.currentGrid.width/2, -gridClient.currentGrid.height/2);
-      });
-    });
-    
-    ros.on('error', (error) => {
-      setConnected(false);
-      console.log('Error connecting to websocket server: ', error);
-    });
-    
-    ros.on('close', () => {
-      console.log('Connection to websocket server closed.');
-    });
-    
-  }, [rosbridgeServerAddress]);
-
-  const styles = {
-    errorMessage: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      position: "absolute",
-      left: "20%",
-      top: "45%",
-      width: "50%",
-      textAlign: "center"
-    }
-  };
-  
-  return (
-    <div id="map">
-      {!isConnected && 
-        <div style={styles.errorMessage}>
-          <h1>Connection to rosbridge_server ({rosbridgeServerAddress}) failed</h1>
-        </div>}
-    </div>
-  )
+  return <div id="map"></div>;
 }
 
-export default Map;
