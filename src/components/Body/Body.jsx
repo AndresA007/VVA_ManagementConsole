@@ -1,32 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LiveVideo from "./LiveVideo";
 import Map from "./Map";
 import ArrowsPad from "./ArrowsPad";
+import RSP from "../../responsive"
 
-function Body(props) {
 
-  // Hooks
+export default function Body(props) {
+
+  // Hook for rosbridge connection
   const [isConnected, setConnected] = useState(false);
 
-  // ROS connection
-  const rosbridgeServerAddress = "ws://192.168.0.12:9090";
+  // Hooks for responsiveness
+  const [currentWindowSizeCat, setCurrentWindowSizeCat] = useState("");
 
-  // Connect to ROS.
-  let ros = new window.ROSLIB.Ros({
-    url : rosbridgeServerAddress
-  });
-      
-  ros.on('connection', () => {
-    console.log('Connected to websocket server: ' + rosbridgeServerAddress);
+  useEffect(() => {
+
+    function updateDimensions() {
+      const windowSizeCat = RSP.getWindowCategory(window.innerWidth);
+      // Update the DOM only when the Window Size Category changes
+      if (windowSizeCat !== currentWindowSizeCat) {
+        setCurrentWindowSizeCat(windowSizeCat);
+      }
+    }
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, [currentWindowSizeCat]);
+
+  const isMobile = currentWindowSizeCat === RSP.SMALL_WINDOW;
+  
+
+  // Manage rosbridge connection
+  props.rosConnection.on('connection', () => {
+    console.log('Connected to websocket server: ' + props.rosConnection.socket.url);
     setConnected(true);
   });
-  
-  ros.on('error', (error) => {
+  props.rosConnection.on('error', (error) => {
     console.log('Error connecting to websocket server: ', error);
     setConnected(false);
   });
-  
-  ros.on('close', () => {
+  props.rosConnection.on('close', () => {
     console.log('Connection to websocket server closed.');
     setConnected(false);
   });
@@ -37,8 +51,9 @@ function Body(props) {
       mobile: {
         errorMessage: {
           fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+          fontSize: "3rem",
           position: "absolute",
-          left: "20%",
+          left: "25%",
           top: "45%",
           width: "50%",
           textAlign: "center"
@@ -53,18 +68,15 @@ function Body(props) {
 
   // Render the body
   const mobileBody = () => (
-    <div>
-      {isConnected ?
-        <Map rosConnection={ros} />
-        :
-        <div style={styles.mobile.errorMessage}>
-          <h1>Connection to rosbridge_server ({rosbridgeServerAddress}) failed.</h1>
-        </div>
-      }
+    <div> 
+    {isConnected ?
+      <Map rosConnection={props.rosConnection} /> :
+      <div style={styles.mobile.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
+    }
 
-      <LiveVideo webVideoServerAddress="192.168.0.12" imageWidth="448" imageHeight="336" />
+      {/* <LiveVideo webVideoServerAddress="192.168.0.12" imageWidth="448" imageHeight="336" /> */}
 
-      {isConnected && <ArrowsPad rosConnection={ros} />}
+      <ArrowsPad rosConnection={props.rosConnection} />
     </div>
   );
 
@@ -76,10 +88,9 @@ function Body(props) {
 
   return (
     <div>
-      {props.mobile ? mobileBody() : desktopBody()}
+      {isMobile ? mobileBody() : desktopBody()}
     </div>
   );
     
 }
 
-export default Body;

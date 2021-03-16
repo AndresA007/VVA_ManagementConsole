@@ -1,37 +1,30 @@
-import React, { useEffect, useState } from "react";
-import respBreakpoint from "../responsive"
+import React from "react";
 import Body from "./Body/Body";
 import Header from "./Header/Header";
 
-function App() {
-  const [windowWidth, setWindowWidth] = useState(0);
+/**
+ * Component function
+ */
+export default function App() {
 
-  useEffect(() => {
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
-
-  function updateDimensions() {
-    const width = window.innerWidth;
-    setWindowWidth(width);
-  }
-
-  const isMobile = windowWidth < respBreakpoint;
+    // ROS connection address
+  const rosbridgeServerAddress = "ws://192.168.0.12:9090";
+  
+  // Connect to ROS.
+  let ros = new window.ROSLIB.Ros({
+    url : rosbridgeServerAddress
+  });
 
   return (
     <div>
       <Header
         title="Map construction"
         subtitle="Current robot: ROBOT 1"
-        mobile={isMobile}
       />
       <Body
-        mobile={isMobile}
+        rosConnection={ros}
       />
 
     </div>
   );
 }
-
-export default App;

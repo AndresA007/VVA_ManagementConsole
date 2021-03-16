@@ -14,7 +14,9 @@ export default function Map(props) {
     // Setup the map client.
     let gridClient = new window.ROS2D.OccupancyGridClient({
       ros : props.rosConnection,
-      rootObject : viewer.scene
+      topic : '/map',
+      rootObject : viewer.scene,
+      continuous : true
     });
     
     // Scale the canvas to fit to the map

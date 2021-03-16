@@ -78,14 +78,14 @@ export default function ArrowsPad(props) {
         break;
       case "downRight":
         myTwist.linear.x = -speed.lineal;
-        myTwist.angular.z = -speed.rotation;
+        myTwist.angular.z = speed.rotation;
         break;
       case "down":
         myTwist.linear.x = -speed.lineal;
         break;
       case "downLeft":
         myTwist.linear.x = -speed.lineal;
-        myTwist.angular.z = speed.rotation;
+        myTwist.angular.z = -speed.rotation;
         break;
       case "left":
         myTwist.angular.z = speed.rotation;

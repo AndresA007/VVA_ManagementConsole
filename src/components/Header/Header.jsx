@@ -1,7 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import MenuMobile from "./MenuMobile";
+import RSP from "../../responsive"
 
-function Header(props) {
+
+export default function Header(props) {
+
+  // Hooks for responsiveness
+  const [currentWindowSizeCat, setCurrentWindowSizeCat] = useState("");
+
+  useEffect(() => {
+
+    function updateDimensions() {
+      const windowSizeCat = RSP.getWindowCategory(window.innerWidth);
+      // Update the DOM only when the Window Size Category changes
+      if (windowSizeCat !== currentWindowSizeCat) {
+        setCurrentWindowSizeCat(windowSizeCat);
+      }
+    }
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, [currentWindowSizeCat]);
+
+  const isMobile = currentWindowSizeCat === RSP.SMALL_WINDOW;
+
+
+  // Styles
   const styles = {
     mobile: {
       title: {
@@ -49,9 +74,7 @@ function Header(props) {
 
   return (
     <div>
-      {props.mobile ? mobileHeader() : desktopHeader()}
+      {isMobile ? mobileHeader() : desktopHeader()}
     </div>
   );
 }
-
-export default Header;
