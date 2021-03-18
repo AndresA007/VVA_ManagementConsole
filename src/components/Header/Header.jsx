@@ -45,7 +45,7 @@ export default function Header(props) {
       },
       menuButton: {
         position: "absolute",
-        right: "10px"
+        right: "5%"
       }
     },
     desktop: {

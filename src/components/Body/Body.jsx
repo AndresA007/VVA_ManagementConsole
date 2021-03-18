@@ -68,7 +68,7 @@ export default function Body(props) {
 
   // Render the body
   const mobileBody = () => (
-    <div> 
+    <div>
     {isConnected ?
       <Map rosConnection={props.rosConnection} /> :
       <div style={styles.mobile.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
