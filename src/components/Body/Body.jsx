@@ -52,6 +52,7 @@ export default function Body(props) {
         errorMessage: {
           fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
           fontSize: "3rem",
+          color: "#f05454",
           position: "absolute",
           left: "25%",
           top: "45%",
@@ -61,7 +62,8 @@ export default function Body(props) {
       },
       desktop: {
         title: {
-          fontSize: "5rem"
+          fontSize: "5rem",
+          color: "#fff"
         }
       }
     };
@@ -74,7 +76,7 @@ export default function Body(props) {
       <div style={styles.mobile.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
     }
 
-      {/* <LiveVideo webVideoServerAddress="192.168.0.12" imageWidth="448" imageHeight="336" /> */}
+      <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" />
 
       <ArrowsPad rosConnection={props.rosConnection} />
     </div>

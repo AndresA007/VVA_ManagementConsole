@@ -23,7 +23,7 @@ export default function ArrowsPad(props) {
       arrowsPad: {
         position: "absolute",
         left: "30%",
-        bottom: "50px",
+        bottom: "7%",
         border: "solid 3px",
         borderRadius: "100%",
         width: "380px",

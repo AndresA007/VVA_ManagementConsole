@@ -9,6 +9,7 @@ export default function App() {
 
     // ROS connection address
   const rosbridgeServerAddress = "ws://192.168.0.12:9090";
+  const videoServerAddress     =      "192.168.0.12";
   
   // Connect to ROS.
   let ros = new window.ROSLIB.Ros({
@@ -23,6 +24,7 @@ export default function App() {
       />
       <Body
         rosConnection={ros}
+        videoServer={videoServerAddress}
       />
 
     </div>

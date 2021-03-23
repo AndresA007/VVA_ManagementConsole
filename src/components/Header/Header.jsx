@@ -50,7 +50,11 @@ export default function Header(props) {
     },
     desktop: {
       title: {
-        fontSize: "5rem"
+        fontSize: "5rem",
+        color: "#fff"
+      },
+      subtitle: {
+        color: "#fff"
       }
     }
   }
@@ -68,7 +72,7 @@ export default function Header(props) {
   const desktopHeader = () => (
     <div>
       <h1 style={styles.desktop.title}>{props.title}</h1>
-      <h2 >{props.subtitle}</h2>
+      <h2 style={styles.desktop.subtitle}>{props.subtitle}</h2>
     </div>
   );
 

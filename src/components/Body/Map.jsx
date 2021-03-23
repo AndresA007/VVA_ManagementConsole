@@ -1,84 +1,131 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect } from "react";
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Button } from "@material-ui/core";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function Map(props) {
-
-  // The value of these variables is preserved from render to render
-  let viewer = useRef(null);
-  let gridClient = useRef(null);
-
-  // Component state Hook
-  const [pressedMapButton, setPressedMapButton] = useState("none");
 
   // Hook to be executed after the DOM is rendered
   useEffect(() => {
     // Create the main viewer.
-    viewer.current = new window.ROS2D.Viewer({
+    let viewer = new window.ROS2D.Viewer({
       divID : 'map',
       width : window.innerWidth,
-      height : window.innerHeight
+      height : window.innerHeight,
+      background: '#222831'
     });
     
     // Setup the map client.
-    gridClient.current = new window.ROS2D.OccupancyGridClient({
+    let gridClient = new window.ROS2D.OccupancyGridClient({
       ros : props.rosConnection,
       topic : '/map',
-      rootObject : viewer.current.scene,
+      rootObject : viewer.scene,
       continuous : true
     });
+
+    // Insert the robot icon
+    let robotIcon = new window.ROS2D.NavigationImage({
+      size: 0.45,
+      image: "images/vva_icon.png"
+    });
+    robotIcon.x = 0;
+    robotIcon.y = 0;
+    viewer.scene.addChild(robotIcon);
     
-    // Scale the canvas to fit to the map
-    gridClient.current.on('change', () => {
-      const mapWidth = gridClient.current.currentGrid.width;
-      const mapHeight = gridClient.current.currentGrid.height;
+    // get a handle to the stage
+    let stage;
+    if (viewer.scene instanceof window.createjs.Stage) {
+      stage = viewer.scene;
+    } else {
+      stage = viewer.scene.getStage();
+    }
+
+    // setup a listener for the robot pose
+    let poseListener = new window.ROSLIB.Topic({
+      ros : props.rosConnection,
+      name : '/map_robot_pose',
+      messageType : 'geometry_msgs/Pose',
+      throttle_rate : 300,
+      reconnect_on_close: false
+    });
+    poseListener.subscribe(function(pose) {
+      // update the robots position on the map
+      robotIcon.x = pose.position.x;
+      robotIcon.y = -pose.position.y;
+      
+      // change the angle
+      robotIcon.rotation = stage.rosQuaternionToGlobalTheta(pose.orientation);
+    });
+
+
+    // setup a listener for the LIDAR LaserScan
+    let lidarListener = new window.ROSLIB.Topic({
+      ros : props.rosConnection,
+      name : '/rplidar_scan',
+      messageType : 'sensor_msgs/LaserScan',
+      throttle_rate : 300,
+      reconnect_on_close: false
+    });
+
+    let lidar_points = [];
+    
+    lidarListener.subscribe(function(scan) {
+      // Draw each one of the points in the LaserScan
+      for (let i = 0; i < scan.ranges.length; i++) {
+        // If this is the first LaserScan message received, create the points
+        if (lidar_points.length < scan.ranges.length) {
+          let point = new window.ROS2D.ArrowShape({
+            size: 0.2,
+            strokeSize: 0.0001,
+            strokeColor: "red",
+            fillColor: "red",
+            pulse: false
+          });
+          lidar_points.push(point);
+          viewer.scene.addChild(point);
+        }
+        // Transform te coordinates from polar to cartesian
+        let angle = scan.angle_min + (i * scan.angle_increment);
+        let xRobot = scan.ranges[i] * Math.cos(angle) - 0.15;
+        let yRobot = -scan.ranges[i] * Math.sin(angle);
+
+        // --------------------------
+        // TODO: Correct these transformations
+
+        // Transform the coordinates from the robot's frame to the map's frame
+        lidar_points[i].x = xRobot * Math.cos(robotIcon.rotation) - yRobot * Math.sin(robotIcon.rotation) + robotIcon.x;
+        lidar_points[i].y = xRobot * Math.sin(robotIcon.rotation) + yRobot * Math.cos(robotIcon.rotation) + robotIcon.y;
+      }
+    });
+    
+
+
+    // Each time the map is updated, scale the canvas to fit to the map
+    gridClient.on('change', () => {
+      const mapWidth = gridClient.currentGrid.width;
+      const mapHeight = gridClient.currentGrid.height;
       let scale = 1.0;
 
       if (mapWidth >= mapHeight) {
-        scale = viewer.current.width / mapWidth;
-        viewer.current.scaleToDimensions(mapWidth, viewer.current.height/scale);
+        scale = viewer.width / mapWidth;
+        viewer.scaleToDimensions(mapWidth, viewer.height/scale);
       }
       else {
-        scale = viewer.current.height / mapHeight;
-        viewer.current.scaleToDimensions(viewer.current.width/scale, mapHeight);
+        scale = viewer.height / mapHeight;
+        viewer.scaleToDimensions(viewer.width/scale, mapHeight);
       }
-
-      viewer.current.shift(-(viewer.current.width/scale)/2, -(viewer.current.height/scale)/2);
-
+      viewer.shift(-(viewer.width/scale)/2, -(viewer.height/scale)/2);
     });
-
   }, [props.rosConnection]);
 
 
   // Create the styles for Material UI components
   const materialUIStyles = {
-    mapZoomIn: {
-      position: "absolute",
-      top: "3%",
+    zoomIcon: {
+      color: "#a4ebf3",
       fontSize: "5rem"
     },
-    mapZoomOut: {
-      position: "absolute",
-      bottom: "3%",
-      fontSize: "5rem"
-    },
-    mapZoomInPressed: {
-      position: "absolute",
-      top: "3%",
-      fontSize: "5rem",
-      backgroundColor: "#a4ebf3",
-      color: "#f4f9f9",
-      borderRadius: "100%"
-    },
-    mapZoomOutPressed: {
-      position: "absolute",
-      bottom: "3%",
-      fontSize: "5rem",
-      backgroundColor: "#a4ebf3",
-      color: "#f4f9f9",
-      borderRadius: "100%"
-    }
   };
 
   const useStyles = makeStyles(theme => materialUIStyles);
@@ -94,65 +141,36 @@ export default function Map(props) {
       height: "250px",
       width: "80px",
       border: "solid 3px",
-      borderRadius: "10%"
+      borderRadius: "10%",
+      lineHeight: "3"
+    },
+    map: {
+      position: "absolute",
+      zIndex: "-1"
     }
   };
 
-  // Zoom in or out the map
-  function zoomTheMap(command) {
-    let newMapWidth = 0;
-    let newMapHeight = 0;
-
-    // Scale the map, the scaleX and scaleY should have the same value at this point
-    if (command === "zoomIn") {
-      newMapWidth =  viewer.current.width  / (viewer.current.scene.scaleX * 1.15);
-      newMapHeight = viewer.current.height / (viewer.current.scene.scaleY * 1.15);
-    }
-    else if (command === "zoomOut") {
-      newMapWidth =  viewer.current.width  / (viewer.current.scene.scaleX * 0.85);
-      newMapHeight = viewer.current.height / (viewer.current.scene.scaleY * 0.85);
-    }
-    viewer.current.scaleToDimensions(newMapWidth, newMapHeight);
-
-    // Center the map
-    viewer.current.shift(
-      -(viewer.current.width/viewer.current.scene.scaleX)/2,
-      -(viewer.current.height/viewer.current.scene.scaleY)/2
-    );
-  }
-  
-  // Event handler
-  function handleEvent(event, arrowName) {
-    let command = "";
-    if (event.type === "mousedown" || event.type === "touchstart") {
-      command = arrowName;
-      zoomTheMap(command);
-    }
-    else if (event.type === "mouseup" || event.type === "touchend") {
-      command = "none";
-    }
-    setPressedMapButton(command);
-  }
-
   return (
-    <div id="map">
-      <div style={styles.mapControls}>
-        <ZoomInIcon
-          classes={pressedMapButton === "zoomIn" ? {root: classes.mapZoomInPressed} : {root: classes.mapZoomIn}}
-          onMouseDown={event  => {handleEvent(event, "zoomIn")}}
-          onMouseUp={event    => {handleEvent(event, "zoomIn")}}
-          onTouchStart={event => {handleEvent(event, "zoomIn")}}
-          onTouchEnd={event   => {handleEvent(event, "zoomIn")}}
-        />
-        <ZoomOutIcon
-          classes={pressedMapButton === "zoomOut" ? {root: classes.mapZoomOutPressed} : {root: classes.mapZoomOut}}
-          onMouseDown={event  => {handleEvent(event, "zoomOut")}}
-          onMouseUp={event    => {handleEvent(event, "zoomOut")}}
-          onTouchStart={event => {handleEvent(event, "zoomOut")}}
-          onTouchEnd={event   => {handleEvent(event, "zoomOut")}}
-        />
-      </div>
-    </div>
+    <TransformWrapper>
+      {({ zoomIn, zoomOut }) => (
+        <div>
+          <div style={styles.mapControls}>
+            <Button onClick={zoomIn} >
+              <ZoomInIcon classes={{root: classes.zoomIcon}} />
+            </Button>
+            <br /><br />
+            <Button onClick={zoomOut} >
+              <ZoomOutIcon classes={{root: classes.zoomIcon}} />
+            </Button>
+          </div>
+          <div style={styles.map}>
+            <TransformComponent>
+              <div id="map"></div>
+            </TransformComponent>
+          </div>
+        </div>
+      )}
+    </TransformWrapper>
   );
 }
 
