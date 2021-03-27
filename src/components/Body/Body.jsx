@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import LiveVideo from "./LiveVideo";
 import Map from "./Map";
 import ArrowsPad from "./ArrowsPad";
-import RSP from "../../responsive"
+import RSP from "../../responsive";
+import ControlButtons from "./ControlButtons";
 
 
 export default function Body(props) {
@@ -71,14 +72,16 @@ export default function Body(props) {
   // Render the body
   const mobileBody = () => (
     <div>
-    {isConnected ?
-      <Map rosConnection={props.rosConnection} /> :
-      <div style={styles.mobile.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
-    }
+      {isConnected ?
+        <Map rosConnection={props.rosConnection} /> :
+        <div style={styles.mobile.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
+      }
 
       <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" />
 
       <ArrowsPad rosConnection={props.rosConnection} />
+
+      <ControlButtons rosConnection={props.rosConnection} connected={isConnected} />
     </div>
   );
 

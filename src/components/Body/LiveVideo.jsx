@@ -1,22 +1,17 @@
 import React, { useEffect } from "react";
 
 export default function LiveVideo(props) {
-
-  const webVideoServerAddress = props.webVideoServerAddress;
-  const videoTopic = "/camera/rgb/image_raw";
-  const imageWidth = props.imageWidth;
-  const imageHeight = props.imageHeight;
-    
+  // Hook to execute only once or when one of the props change    
   useEffect(() => {
     // Create the main viewer.
     new window.MJPEGCANVAS.Viewer({
       divID : 'mjpeg',
-      host : webVideoServerAddress,
-      width : imageWidth,
-      height : imageHeight,
-      topic : videoTopic
+      host : props.webVideoServerAddress,
+      width : props.imageWidth,
+      height : props.imageHeight,
+      topic : "/camera/rgb/image_raw"
     });
-  }, [imageHeight, imageWidth, webVideoServerAddress]);
+  }, [props.imageHeight, props.imageWidth, props.webVideoServerAddress]);
 
   const styles = {
     mobile: {

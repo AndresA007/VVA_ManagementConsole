@@ -46,7 +46,7 @@ export default function Map(props) {
       ros : props.rosConnection,
       name : '/map_robot_pose',
       messageType : 'geometry_msgs/Pose',
-      throttle_rate : 300,
+      throttle_rate : 100,
       reconnect_on_close: false
     });
     poseListener.subscribe(function(pose) {
@@ -64,7 +64,7 @@ export default function Map(props) {
       ros : props.rosConnection,
       name : '/rplidar_scan',
       messageType : 'sensor_msgs/LaserScan',
-      throttle_rate : 300,
+      throttle_rate : 100,
       reconnect_on_close: false
     });
 
@@ -87,15 +87,14 @@ export default function Map(props) {
         }
         // Transform te coordinates from polar to cartesian
         let angle = scan.angle_min + (i * scan.angle_increment);
-        let xRobot = scan.ranges[i] * Math.cos(angle) - 0.15;
+        let xRobot = scan.ranges[i] * Math.cos(angle);
         let yRobot = -scan.ranges[i] * Math.sin(angle);
 
-        // --------------------------
-        // TODO: Correct these transformations
+        let robotAngle = (robotIcon.rotation - 90) * Math.PI/180;
 
         // Transform the coordinates from the robot's frame to the map's frame
-        lidar_points[i].x = xRobot * Math.cos(robotIcon.rotation) - yRobot * Math.sin(robotIcon.rotation) + robotIcon.x;
-        lidar_points[i].y = xRobot * Math.sin(robotIcon.rotation) + yRobot * Math.cos(robotIcon.rotation) + robotIcon.y;
+        lidar_points[i].x = xRobot * Math.cos(robotAngle) - yRobot * Math.sin(robotAngle) + robotIcon.x - 0.15;
+        lidar_points[i].y = xRobot * Math.sin(robotAngle) + yRobot * Math.cos(robotAngle) + robotIcon.y;
       }
     });
     
