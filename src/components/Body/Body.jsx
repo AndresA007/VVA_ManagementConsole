@@ -62,9 +62,15 @@ export default function Body(props) {
         }
       },
       desktop: {
-        title: {
-          fontSize: "5rem",
-          color: "#fff"
+        errorMessage: {
+          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+          fontSize: "1.5rem",
+          color: "#f05454",
+          position: "absolute",
+          left: "530px",
+          top: "45%",
+          width: "45%",
+          textAlign: "center"
         }
       }
     };
@@ -73,29 +79,29 @@ export default function Body(props) {
   const mobileBody = () => (
     <div>
       {isConnected ?
-        <Map rosConnection={props.rosConnection} /> :
+        <Map rosConnection={props.rosConnection} isMobile={isMobile} /> :
         <div style={styles.mobile.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
       }
-
-      <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" />
-
-      <ArrowsPad rosConnection={props.rosConnection} />
-
-      <ControlButtons rosConnection={props.rosConnection} connected={isConnected} />
+      <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} />
     </div>
   );
 
   const desktopBody = () => (
     <div>
-      <h1 style={styles.desktop.title}>Desktop Body</h1>
+      {isConnected ?
+        <Map rosConnection={props.rosConnection} isMobile={isMobile} /> :
+        <div style={styles.desktop.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
+      }
+      <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
     </div>
   );
 
   return (
     <div>
       {isMobile ? mobileBody() : desktopBody()}
+      <ArrowsPad rosConnection={props.rosConnection} isMobile={isMobile} />
+      <ControlButtons rosConnection={props.rosConnection} connected={isConnected} isMobile={isMobile} />
     </div>
   );
-    
 }
 

@@ -1,8 +1,12 @@
 //#####################################################
 // Styles for the Material UI components
 
-// Common values for all the arrows
-const arrowPadCommonStyles = {
+
+//#####################################################
+// Mobile
+
+// Common values for all the arrows in mobile
+const arrowPadCommonMobileStyles = {
 
   // For up, down, left and right
   straight: {
@@ -29,106 +33,237 @@ const arrowPadCommonStyles = {
   }
 };
 
-// Styles per each arrow
-const arrowPadStyles = {
+// Styles per each arrow for mobile
+const arrowPadMobileStyles = {
 
   // Straight arrows
   upArrow: {
-    ...arrowPadCommonStyles.straight,
+    ...arrowPadCommonMobileStyles.straight,
     left: "32%",
-    top: arrowPadCommonStyles.straightMargin,
+    top: arrowPadCommonMobileStyles.straightMargin,
   },
   rightArrow: {
-    ...arrowPadCommonStyles.straight,
-    right: arrowPadCommonStyles.straightMargin,
+    ...arrowPadCommonMobileStyles.straight,
+    right: arrowPadCommonMobileStyles.straightMargin,
     top: "32%",
   },
   downArrow: {
-    ...arrowPadCommonStyles.straight,
+    ...arrowPadCommonMobileStyles.straight,
     left: "32%",
-    bottom: arrowPadCommonStyles.straightMargin,
+    bottom: arrowPadCommonMobileStyles.straightMargin,
   },
   leftArrow: {
-    ...arrowPadCommonStyles.straight,
-    left: arrowPadCommonStyles.straightMargin,
+    ...arrowPadCommonMobileStyles.straight,
+    left: arrowPadCommonMobileStyles.straightMargin,
     top: "32%",
   },
 
   // Inclined arrows
   upRightArrow: {
-    ...arrowPadCommonStyles.inclined,
-    right: arrowPadCommonStyles.inclinedMargin,
-    top: arrowPadCommonStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.inclined,
+    right: arrowPadCommonMobileStyles.inclinedMargin,
+    top: arrowPadCommonMobileStyles.inclinedMargin,
   },
   downRightArrow: {
-    ...arrowPadCommonStyles.inclined,
-    right: arrowPadCommonStyles.inclinedMargin,
-    bottom: arrowPadCommonStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.inclined,
+    right: arrowPadCommonMobileStyles.inclinedMargin,
+    bottom: arrowPadCommonMobileStyles.inclinedMargin,
   },
   downLeftArrow: {
-    ...arrowPadCommonStyles.inclined,
-    left: arrowPadCommonStyles.inclinedMargin,
-    bottom: arrowPadCommonStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.inclined,
+    left: arrowPadCommonMobileStyles.inclinedMargin,
+    bottom: arrowPadCommonMobileStyles.inclinedMargin,
   },
   upLeftArrow: {
-    ...arrowPadCommonStyles.inclined,
-    left: arrowPadCommonStyles.inclinedMargin,
-    top: arrowPadCommonStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.inclined,
+    left: arrowPadCommonMobileStyles.inclinedMargin,
+    top: arrowPadCommonMobileStyles.inclinedMargin,
   },
 
   // Pressed straight arrows
   upArrowPressed: {
-    ...arrowPadCommonStyles.straight,
+    ...arrowPadCommonMobileStyles.straight,
     left: "32%",
-    top: arrowPadCommonStyles.straightMargin,
-    ...arrowPadCommonStyles.pressed
+    top: arrowPadCommonMobileStyles.straightMargin,
+    ...arrowPadCommonMobileStyles.pressed
   },
   rightArrowPressed: {
-    ...arrowPadCommonStyles.straight,
-    right: arrowPadCommonStyles.straightMargin,
+    ...arrowPadCommonMobileStyles.straight,
+    right: arrowPadCommonMobileStyles.straightMargin,
     top: "32%",
-    ...arrowPadCommonStyles.pressed
+    ...arrowPadCommonMobileStyles.pressed
   },
   downArrowPressed: {
-    ...arrowPadCommonStyles.straight,
+    ...arrowPadCommonMobileStyles.straight,
     left: "32%",
-    bottom: arrowPadCommonStyles.straightMargin,
-    ...arrowPadCommonStyles.pressed
+    bottom: arrowPadCommonMobileStyles.straightMargin,
+    ...arrowPadCommonMobileStyles.pressed
   },
   leftArrowPressed: {
-    ...arrowPadCommonStyles.straight,
-    left: arrowPadCommonStyles.straightMargin,
+    ...arrowPadCommonMobileStyles.straight,
+    left: arrowPadCommonMobileStyles.straightMargin,
     top: "32%",
-    ...arrowPadCommonStyles.pressed
+    ...arrowPadCommonMobileStyles.pressed
   },
 
   // Pressed inclined arrows
   upRightArrowPressed: {
-    ...arrowPadCommonStyles.inclined,
-    right: arrowPadCommonStyles.inclinedMargin,
-    top: arrowPadCommonStyles.inclinedMargin,
-    ...arrowPadCommonStyles.pressed
+    ...arrowPadCommonMobileStyles.inclined,
+    right: arrowPadCommonMobileStyles.inclinedMargin,
+    top: arrowPadCommonMobileStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.pressed
   },
   downRightArrowPressed: {
-    ...arrowPadCommonStyles.inclined,
-    right: arrowPadCommonStyles.inclinedMargin,
-    bottom: arrowPadCommonStyles.inclinedMargin,
-    ...arrowPadCommonStyles.pressed
+    ...arrowPadCommonMobileStyles.inclined,
+    right: arrowPadCommonMobileStyles.inclinedMargin,
+    bottom: arrowPadCommonMobileStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.pressed
   },
   downLeftArrowPressed: {
-    ...arrowPadCommonStyles.inclined,
-    left: arrowPadCommonStyles.inclinedMargin,
-    bottom: arrowPadCommonStyles.inclinedMargin,
-    ...arrowPadCommonStyles.pressed
+    ...arrowPadCommonMobileStyles.inclined,
+    left: arrowPadCommonMobileStyles.inclinedMargin,
+    bottom: arrowPadCommonMobileStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.pressed
   },
   upLeftArrowPressed: {
-    ...arrowPadCommonStyles.inclined,
-    left: arrowPadCommonStyles.inclinedMargin,
-    top: arrowPadCommonStyles.inclinedMargin,
-    ...arrowPadCommonStyles.pressed
+    ...arrowPadCommonMobileStyles.inclined,
+    left: arrowPadCommonMobileStyles.inclinedMargin,
+    top: arrowPadCommonMobileStyles.inclinedMargin,
+    ...arrowPadCommonMobileStyles.pressed
   }
 
 };
 
 
-export default arrowPadStyles;
+
+//#####################################################
+// Desktop
+
+// Common values for all the arrows in desktop
+const arrowPadCommonDesktopStyles = {
+
+  // For up, down, left and right
+  straight: {
+    position: "absolute",
+    fontSize: "2.3rem",
+    borderRadius: "100%",
+    color: "#a4ebf3"
+  },
+  straightMargin: "5%",
+
+  // For up-right, down-right, down-left and up-right
+  inclined: {
+    position: "absolute",
+    transform: "rotate(45deg)",
+    fontSize: "1.6rem",
+    borderRadius: "100%",
+    color: "#a4ebf3"
+  },
+  inclinedMargin: "8%",
+
+  pressed: {
+    backgroundColor: "#a4ebf3",
+    color: "#f4f9f9"
+  }
+};
+
+// Styles per each arrow for desktop
+const arrowPadDesktopStyles = {
+  // Straight arrows
+  upArrow: {
+    ...arrowPadCommonDesktopStyles.straight,
+    left: "35%",
+    top: arrowPadCommonDesktopStyles.straightMargin,
+  },
+  rightArrow: {
+    ...arrowPadCommonDesktopStyles.straight,
+    right: arrowPadCommonDesktopStyles.straightMargin,
+    top: "35%",
+  },
+  downArrow: {
+    ...arrowPadCommonDesktopStyles.straight,
+    left: "35%",
+    bottom: arrowPadCommonDesktopStyles.straightMargin,
+  },
+  leftArrow: {
+    ...arrowPadCommonDesktopStyles.straight,
+    left: arrowPadCommonDesktopStyles.straightMargin,
+    top: "35%",
+  },
+
+  // Inclined arrows
+  upRightArrow: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    right: arrowPadCommonDesktopStyles.inclinedMargin,
+    top: arrowPadCommonDesktopStyles.inclinedMargin,
+  },
+  downRightArrow: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    right: arrowPadCommonDesktopStyles.inclinedMargin,
+    bottom: arrowPadCommonDesktopStyles.inclinedMargin,
+  },
+  downLeftArrow: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    left: arrowPadCommonDesktopStyles.inclinedMargin,
+    bottom: arrowPadCommonDesktopStyles.inclinedMargin,
+  },
+  upLeftArrow: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    left: arrowPadCommonDesktopStyles.inclinedMargin,
+    top: arrowPadCommonDesktopStyles.inclinedMargin,
+  },
+
+  // Pressed straight arrows
+  upArrowPressed: {
+    ...arrowPadCommonDesktopStyles.straight,
+    left: "35%",
+    top: arrowPadCommonDesktopStyles.straightMargin,
+    ...arrowPadCommonDesktopStyles.pressed
+  },
+  rightArrowPressed: {
+    ...arrowPadCommonDesktopStyles.straight,
+    right: arrowPadCommonDesktopStyles.straightMargin,
+    top: "35%",
+    ...arrowPadCommonDesktopStyles.pressed
+  },
+  downArrowPressed: {
+    ...arrowPadCommonDesktopStyles.straight,
+    left: "35%",
+    bottom: arrowPadCommonDesktopStyles.straightMargin,
+    ...arrowPadCommonDesktopStyles.pressed
+  },
+  leftArrowPressed: {
+    ...arrowPadCommonDesktopStyles.straight,
+    left: arrowPadCommonDesktopStyles.straightMargin,
+    top: "35%",
+    ...arrowPadCommonDesktopStyles.pressed
+  },
+
+  // Pressed inclined arrows
+  upRightArrowPressed: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    right: arrowPadCommonDesktopStyles.inclinedMargin,
+    top: arrowPadCommonDesktopStyles.inclinedMargin,
+    ...arrowPadCommonDesktopStyles.pressed
+  },
+  downRightArrowPressed: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    right: arrowPadCommonDesktopStyles.inclinedMargin,
+    bottom: arrowPadCommonDesktopStyles.inclinedMargin,
+    ...arrowPadCommonDesktopStyles.pressed
+  },
+  downLeftArrowPressed: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    left: arrowPadCommonDesktopStyles.inclinedMargin,
+    bottom: arrowPadCommonDesktopStyles.inclinedMargin,
+    ...arrowPadCommonDesktopStyles.pressed
+  },
+  upLeftArrowPressed: {
+    ...arrowPadCommonDesktopStyles.inclined,
+    left: arrowPadCommonDesktopStyles.inclinedMargin,
+    top: arrowPadCommonDesktopStyles.inclinedMargin,
+    ...arrowPadCommonDesktopStyles.pressed
+  }
+};
+
+export { arrowPadMobileStyles, arrowPadDesktopStyles };

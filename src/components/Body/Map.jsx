@@ -114,17 +114,31 @@ export default function Map(props) {
         scale = viewer.height / mapHeight;
         viewer.scaleToDimensions(viewer.width/scale, mapHeight);
       }
-      viewer.shift(-(viewer.width/scale)/2, -(viewer.height/scale)/2);
+
+      let widthShift = 0;
+      if (props.isMobile) {
+        widthShift = -(viewer.width/scale)/2;
+      }
+      else {
+        widthShift = -(viewer.width/scale)/3;
+      }
+      viewer.shift(widthShift, -(viewer.height/scale)/2);
     });
-  }, [props.rosConnection]);
+  }, [props.rosConnection, props.isMobile]);
 
 
   // Create the styles for Material UI components
   const materialUIStyles = {
-    zoomIcon: {
+    mobileZoomIcon: {
       color: "#a4ebf3",
       fontSize: "5rem"
     },
+    desktopZoomIcon: {
+      color: "#a4ebf3",
+      fontSize: "2rem",
+      position: "relative",
+      right: "15px"
+    }
   };
 
   const useStyles = makeStyles(theme => materialUIStyles);
@@ -132,20 +146,39 @@ export default function Map(props) {
 
   // Styles of map controls
   const styles = {
-    mapControls: {
+    mapContainer: {
       position: "absolute",
-      right: "5%",
-      top: "45%",
-      color: "#a4ebf3",
-      height: "250px",
-      width: "80px",
-      border: "solid 3px",
-      borderRadius: "10%",
-      lineHeight: "3"
-    },
-    map: {
-      position: "absolute",
+      right: "0",
       zIndex: "-1"
+    },
+    mobile: {
+      mapControls: {
+        position: "absolute",
+        right: "5%",
+        top: "45%",
+        color: "#a4ebf3",
+        height: "250px",
+        width: "80px",
+        border: "solid 3px",
+        borderRadius: "10%",
+        lineHeight: "3"
+      }
+    },
+    desktop: {
+      map: {
+        width: window.innerWidth - 466
+      },
+      mapControls: {
+        position: "absolute",
+        right: "3%",
+        top: "45%",
+        color: "#a4ebf3",
+        height: "100px",
+        width: "30px",
+        border: "solid 3px",
+        borderRadius: "10%",
+        lineHeight: "0.8"
+      }
     }
   };
 
@@ -153,18 +186,24 @@ export default function Map(props) {
     <TransformWrapper>
       {({ zoomIn, zoomOut }) => (
         <div>
-          <div style={styles.mapControls}>
+          <div style={props.isMobile ? styles.mobile.mapControls : styles.desktop.mapControls}>
             <Button onClick={zoomIn} >
-              <ZoomInIcon classes={{root: classes.zoomIcon}} />
+              {props.isMobile ?
+                <ZoomInIcon classes={{root: classes.mobileZoomIcon}} /> :
+                <ZoomInIcon classes={{root: classes.desktopZoomIcon}} />
+              }
             </Button>
             <br /><br />
             <Button onClick={zoomOut} >
-              <ZoomOutIcon classes={{root: classes.zoomIcon}} />
+              {props.isMobile ?
+                <ZoomOutIcon classes={{root: classes.mobileZoomIcon}} /> :
+                <ZoomOutIcon classes={{root: classes.desktopZoomIcon}} />
+              }
             </Button>
           </div>
-          <div style={styles.map}>
+          <div style={styles.mapContainer}>
             <TransformComponent>
-              <div id="map"></div>
+              <div style={props.isMobile ? {} : styles.desktop.map} id="map"></div>
             </TransformComponent>
           </div>
         </div>

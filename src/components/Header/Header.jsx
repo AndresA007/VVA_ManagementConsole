@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MenuMobile from "./MenuMobile";
 import RSP from "../../responsive"
+import { AppBar, Toolbar, Button, makeStyles } from "@material-ui/core";
 
 
 export default function Header(props) {
@@ -25,6 +26,18 @@ export default function Header(props) {
 
   const isMobile = currentWindowSizeCat === RSP.SMALL_WINDOW;
 
+  // Create the styles for Material UI components
+  const materialUIStyles = {
+    navbar: {
+      backgroundColor: "#1c819e",
+      color: "#e6e6d4"
+    },
+    navButtons: {
+      margin: "0 3%",
+    }
+  };
+  const useStyles = makeStyles(theme => materialUIStyles);
+  const classes = useStyles();
 
   // Styles
   const styles = {
@@ -49,12 +62,33 @@ export default function Header(props) {
       }
     },
     desktop: {
+      logo: {
+        color: "#f8f1f1",
+        fontFamily: '"Coda Caption", sans-serif'
+      },
+      logoTreeText: {
+        color: "#00d000",
+        fontFamily: '"Potta One", cursive',
+        fontSize: "1.01rem"
+
+      },
+      navButtonsContainer: {
+        width: "100%",
+        margin: "0 0 0 5%"
+      },
       title: {
-        fontSize: "5rem",
-        color: "#fff"
+        backgroundColor: "#005874",
+        color: "#ffbe00",
+        padding: "5px 24px",
+        fontSize: "0.9rem",
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif'
       },
       subtitle: {
-        color: "#fff"
+        fontSize: "0.9rem",
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        color: "#a4ebf3",
+        margin: "13px 24px",
+        position: "absolute"
       }
     }
   }
@@ -64,15 +98,25 @@ export default function Header(props) {
       <div style={styles.mobile.title}>{props.title}</div>
       <div style={styles.mobile.subtitle}>{props.subtitle}</div>
       <div style={styles.mobile.menuButton} >
-        <MenuMobile  />
+        <MenuMobile />
       </div>
     </div>
   );
 
   const desktopHeader = () => (
     <div>
-      <h1 style={styles.desktop.title}>{props.title}</h1>
-      <h2 style={styles.desktop.subtitle}>{props.subtitle}</h2>
+      <AppBar position="static" classes={{root: classes.navbar}} >
+        <Toolbar variant="dense">
+          <span style={styles.desktop.logo}>MO<span style={styles.desktop.logoTreeText}>TREE</span>BOT</span>
+          <div style={styles.desktop.navButtonsContainer}>
+            <Button color="inherit" classes={{root: classes.navButtons}}>Events</Button>
+            <Button color="inherit" classes={{root: classes.navButtons}}>Maps</Button>
+            <Button color="inherit" classes={{root: classes.navButtons}}>Patrolling</Button>
+          </div>
+        </Toolbar>
+      </AppBar>
+      <div style={styles.desktop.title}>{props.title}</div>
+      <div style={styles.desktop.subtitle}>{props.subtitle}</div>
     </div>
   );
 

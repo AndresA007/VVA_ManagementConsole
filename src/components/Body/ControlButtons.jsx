@@ -40,8 +40,8 @@ export default function ControlButtons(props) {
     });
   }, [props.rosConnection]);
 
-  // Create the styles for Material UI components
-  const materialUIStyles = {
+  // Create the styles for Material UI components for mobile
+  const materialUIMobileStyles = {
     label: {
       fontSize: "2.2rem"
     },
@@ -51,7 +51,7 @@ export default function ControlButtons(props) {
       right: "4%",
       width: "170px"
     },
-    cancel: {
+    restart: {
       position: "absolute",
       top: "170px",
       right: "26%",
@@ -59,18 +59,56 @@ export default function ControlButtons(props) {
     }
   };
 
-  const useStyles = makeStyles(theme => materialUIStyles);
+  // Create the styles for Material UI components for desktop
+  const materialUIDesktopStyles = {
+    label: {
+      fontSize: "0.9rem"
+    },
+    done: {
+      position: "absolute",
+      top: "550px",
+      left: "340px",
+      width: "100px"
+    },
+    restart: {
+      position: "absolute",
+      top: "500px",
+      left: "340px",
+      width: "100px"
+    }
+  };
+  
+  const useStyles = makeStyles(theme => {
+    if (props.isMobile) {
+      return materialUIMobileStyles;
+    }
+    else {
+      return materialUIDesktopStyles;
+    }
+  });
   const classes = useStyles();
 
   // Styles for the text
   const styles = {
-    text: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      fontSize: "2.4rem",
-      color: "#a4ebf3",
-      position: "absolute",
-      top: "300px",
-      right: "12%"
+    mobile: {
+      text: {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        fontSize: "2.4rem",
+        color: "#a4ebf3",
+        position: "absolute",
+        top: "300px",
+        right: "12%"
+      }
+    },
+    desktop: {
+      text: {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        fontSize: "0.9rem",
+        color: "#a4ebf3",
+        position: "absolute",
+        top: "470px",
+        left: "330px"
+      }
     }
   };
 
@@ -128,7 +166,7 @@ export default function ControlButtons(props) {
             Done
           </Button>
           <Button size="large" variant="contained"
-            classes={{label: classes.label, root: classes.cancel}}
+            classes={{label: classes.label, root: classes.restart}}
             onClick={() => {
               if (props.connected) {
                 // Calling reset rtabmap map
@@ -151,7 +189,7 @@ export default function ControlButtons(props) {
           >
             Restart
           </Button>
-          <div style={styles.text}>Map size: {mapSizeMB} MB</div>
+          <div style={props.isMobile ? styles.mobile.text : styles.desktop.text}>Map size: {mapSizeMB} MB</div>
         </div>
       }
     </div>

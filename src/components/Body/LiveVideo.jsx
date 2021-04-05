@@ -11,6 +11,11 @@ export default function LiveVideo(props) {
       height : props.imageHeight,
       topic : "/camera/rgb/image_raw"
     });
+
+    return (() => {
+      let mjpegdiv = document.getElementById("mjpeg");
+      mjpegdiv.removeChild(mjpegdiv.childNodes[0]);
+    });
   }, [props.imageHeight, props.imageWidth, props.webVideoServerAddress]);
 
   const styles = {
@@ -24,9 +29,16 @@ export default function LiveVideo(props) {
       }
     },
     desktop: {
+      liveVideo: {
+        position: "absolute",
+        left: 0,
+        top: "115px",
+        border: "solid 1px",
+        color: "#ccf2f4"
+      }
     }
   };
 
-  return <div id="mjpeg" style={styles.mobile.liveVideo}></div>;
+  return <div id="mjpeg" style={props.isMobile ? styles.mobile.liveVideo : styles.desktop.liveVideo}></div>;
 }
 
