@@ -35,6 +35,7 @@ createjs.Stage.prototype.rosQuaternionToGlobalTheta = function(orientation) {
   var q2 = orientation.y;
   var q3 = orientation.z;
   // Canvas rotation is clock wise and in degrees
+  //console.log(q1);                                              // *********************************** ROTACION  vehiculo Dad ***
   return -Math.atan2(2 * (q0 * q3 + q1 * q2), 1 - 2 * (q2 * q2 + q3 * q3)) * 180.0 / Math.PI;
 };
 
@@ -593,7 +594,7 @@ ROS2D.NavigationImage.prototype.__proto__ = createjs.Bitmap.prototype;
  *   * strokeSize (optional) - the size of the outline
  *   * strokeColor (optional) - the createjs color for the stroke
  */
-ROS2D.PathShape = function(options) {
+ROS2D.PathShape = function(options) {                                                     //*** objeto ROS2D */
 	options = options || {};
 	var path = options.path;
 	this.strokeSize = options.strokeSize || 3;
@@ -604,8 +605,8 @@ ROS2D.PathShape = function(options) {
 	
 	if (path !== null && typeof path !== 'undefined') {
 		this.graphics.setStrokeStyle(this.strokeSize);
-		this.graphics.beginStroke(this.strokeColor);
-		this.graphics.moveTo(path.poses[0].pose.position.x / this.scaleX, path.poses[0].pose.position.y / -this.scaleY);
+		this.graphics.beginStroke(this.strokeColor);                                                                   //Move to revisar
+		this.graphics.moveTo(path.poses[0].pose.position.x / this.scaleX, path.poses[0].pose.position.y / -this.scaleY);   //***revisar */
 		for (var i=1; i<path.poses.length; ++i) {
 			this.graphics.lineTo(path.poses[i].pose.position.x / this.scaleX, path.poses[i].pose.position.y / -this.scaleY);
 		}
@@ -619,7 +620,7 @@ ROS2D.PathShape = function(options) {
 /**
  * Set the path to draw
  *
- * @param path of type nav_msgs/Path
+ * @param path of type nav_msgs/Path   //* conjunto de pose que representa una ruta para que un robot siga
  */
 ROS2D.PathShape.prototype.setPath = function(path) {
 	this.graphics.clear();
@@ -657,9 +658,9 @@ ROS2D.PathShape.prototype.__proto__ = createjs.Shape.prototype;
 ROS2D.PolygonMarker = function(options) {
 //	var that = this;
 	options = options || {};
-	this.lineSize = options.lineSize || 3;
+	this.lineSize = options.lineSize || 0.01; // *** 3
 	this.lineColor = options.lineColor || createjs.Graphics.getRGB(0, 0, 255, 0.66);
-	this.pointSize = options.pointSize || 10;
+	this.pointSize = options.pointSize || 0.1; // *****10 *****
 	this.pointColor = options.pointColor || createjs.Graphics.getRGB(255, 0, 0, 0.66);
 	this.fillColor = options.pointColor || createjs.Graphics.getRGB(0, 255, 0, 0.33);
 	this.lineCallBack = options.lineCallBack;
