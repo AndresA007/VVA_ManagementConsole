@@ -122,35 +122,38 @@ export default function Body(props) {
   return (
     <div>
 
-    { /*
-      <h1>
-        Memorizes: <ControlButtons value={estadoMap} />
-      </h1> */
-    }
-
       {/*isMobile ? mobileBody() : desktopBody()*/}
 
-
-
-
-      {/*isConnected ?
+      {isConnected ?
       
-       
+       <div>
 
         <div>
-         
-          <MapPatrolling rosConnection={props.rosConnection} isMobile={isMobile} />
+          {state == 0 ?
+              
+            <div>
+              <Map rosConnection={props.rosConnection} isMobile={isMobile} />
+              <ArrowsPad rosConnection={props.rosConnection} isMobile={isMobile} />
+
+            </div>
+              :
+            <div>
+              <MapPatrolling rosConnection={props.rosConnection} isMobile={isMobile} />
+            </div>
+          }
         </div>
-        
+        </div>
+               
         :
         <div style={isMobile ? styles.mobile.errorMessage : styles.desktop.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
       
-      */}
-      {/*isMobile ?
-        <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} /> :
-        <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
-      */}
-      <ArrowsPad rosConnection={props.rosConnection} isMobile={isMobile} />
+      }
+      
+      {isMobile ?
+          <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} /> :
+          <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
+      }
+
       <ControlButtons rosConnection={props.rosConnection} connected={isConnected} isMobile={isMobile} handler={handler} />
         
     </div>
