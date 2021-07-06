@@ -1,12 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import LiveVideo from "./LiveVideo";
 import Map from "./Map";
+import MapPatrolling from "./Map_patrolling";
 import ArrowsPad from "./ArrowsPad";
 import RSP from "../../responsive";
 import ControlButtons from "./ControlButtons";
+import { Button } from "@material-ui/core";
+
+//const variable=props.variable;
+  //console.log(variable);
 
 
 export default function Body(props) {
+
+  const [state, setState] = useState(0);
+
+   function handler(param) {
+    setState(param);
+    }
+
+    console.log(state);
+
+  
+  
+
+  //const [estadoMap, setEMap] = useState(1); //Saber cual es el estado para cambiar de mapa
+
+  //let variable=props.variable;
+  //console.log(variable);
 
   // Hook for rosbridge connection
   const [isConnected, setConnected] = useState(false);
@@ -27,6 +48,8 @@ export default function Body(props) {
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
+
+
   }, [currentWindowSizeCat]);
 
   const isMobile = currentWindowSizeCat === RSP.SMALL_WINDOW;
@@ -98,17 +121,38 @@ export default function Body(props) {
 
   return (
     <div>
+
+    { /*
+      <h1>
+        Memorizes: <ControlButtons value={estadoMap} />
+      </h1> */
+    }
+
       {/*isMobile ? mobileBody() : desktopBody()*/}
-      {isConnected ?
-        <Map rosConnection={props.rosConnection} isMobile={isMobile} /> :
+
+
+
+
+      {/*isConnected ?
+      
+       
+
+        <div>
+         
+          <MapPatrolling rosConnection={props.rosConnection} isMobile={isMobile} />
+        </div>
+        
+        :
         <div style={isMobile ? styles.mobile.errorMessage : styles.desktop.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
-      }
-      {isMobile ?
+      
+      */}
+      {/*isMobile ?
         <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} /> :
         <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
-      }
+      */}
       <ArrowsPad rosConnection={props.rosConnection} isMobile={isMobile} />
-      <ControlButtons rosConnection={props.rosConnection} connected={isConnected} isMobile={isMobile} />
+      <ControlButtons rosConnection={props.rosConnection} connected={isConnected} isMobile={isMobile} handler={handler} />
+        
     </div>
   );
 }

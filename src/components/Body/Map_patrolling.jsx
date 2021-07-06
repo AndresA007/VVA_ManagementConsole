@@ -4,7 +4,9 @@ import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import { makeStyles, Button } from "@material-ui/core";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
-export default function Map(props) {
+
+
+export default function MapPatrolling(props) {
 
   // Hook to be executed after the DOM is rendered
   useEffect(() => {
@@ -193,23 +195,22 @@ export default function Map(props) {
         //console.log(pos); 
 
 				polygon.addPoint(pos);
-        
-        //robotIcon.x = 1.08;
-        //robotIcon.y = 0.08;
 
         coord.push(pos);
 
-
-
-        arrayCoor(coord);
+        //arrayCoor(coord);
+        tourMapPoint(coord);
 			}
 			clickedPolygon = false;
 		}); 
 
-    
+    var cont = 0;
+    var cont2 = 0;
+    var cont3 = 1;
     function arrayCoor(c){  // ------------------------------------------------
       
-      var cont2 = 0;
+      console.log(coord.length);
+      
       while(cont2 < coord.length){
 
         console.log(coord[cont2]);
@@ -219,6 +220,59 @@ export default function Map(props) {
       
       return;
     } 
+
+    
+
+    let poseFramed = [];
+    let poseFramed2 = [];
+
+    function tourMapPoint(c){
+
+      //{x:0.9,y:0.6,z:0}
+
+      while(cont3 == 5){
+
+        console.log(c.length);
+
+        while(cont <= c.length){
+
+          console.log("hola");
+
+          poseFramed = { pose:{     position: c[cont],
+                                    orientation: {x: 0, y: 0,z: 0, w: 0}
+                                  },
+                            frame: "map"
+
+          }
+          poseFramed2.push(poseFramed);
+          cont++;
+        }
+
+          let startItineraryClient = new window.ROSLIB.Service({
+            ros : props.rosConnection,
+            name : '/vva_navigation_intent/start_itinerary',
+            serviceType : 'vva_user_intent/VVAGoalsItinerary'
+          });
+
+          
+          let request = new window.ROSLIB.ServiceRequest({
+            goals : poseFramed2,
+          
+          });
+        
+          startItineraryClient.callService(request, function(result) {
+                console.log('Result for service call on startItinerary:'
+                + result);
+                });
+
+                cont3 = 0;
+        }
+
+        cont3 ++;
+
+      
+      return;
+    }
 
     //*********** */
 

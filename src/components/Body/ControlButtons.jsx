@@ -1,15 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
+//import ReactDOM from "react-dom";
 import { makeStyles, Button } from "@material-ui/core";
+//import body from "./Body";
+
+
+
 
 // Constants to interpret the status topic from the ROS node vva_robot_management
-const VVA_RM_IDLE     = 0
+const VVA_RM_IDLE     = 0;
 //const VVA_RM_MAPPING  = 1
 
+
 export default function ControlButtons(props) {
+
+  //console.log(props);
+  
+   function someMethod() {
+    props.handler(2);
+    
+  }
+  
 
   // Hook to update the DOM each time the map file size is received
   let [mapSizeMB, setMapSizeMB] = useState(0);
   let [vvaRMStatusHook, setVvaRMStatusHook] = useState(VVA_RM_IDLE);
+
 
   // Hook to execute this code only once
   useEffect(() => {
@@ -56,6 +71,12 @@ export default function ControlButtons(props) {
       top: "170px",
       right: "26%",
       width: "170px"
+    },
+    prueba: {
+      position: "absolute",
+      top: "170px",
+      right: "26%",
+      width: "170px"
     }
   };
 
@@ -71,6 +92,12 @@ export default function ControlButtons(props) {
       width: "100px"
     },
     restart: {
+      position: "absolute",
+      top: "500px",
+      left: "340px",
+      width: "100px"
+    },
+    prueba: {
       position: "absolute",
       top: "500px",
       left: "340px",
@@ -112,30 +139,14 @@ export default function ControlButtons(props) {
     }
   };
 
+  
+
   return (
     <div>
       {vvaRMStatusHook === VVA_RM_IDLE ?
         <Button size="large" variant="contained" color="primary"
-          classes={{label: classes.label, root: classes.done}}
-          onClick={() => {
-            if (props.connected) {
-              // Calling start_mapping service
-              let startMappingClient = new window.ROSLIB.Service({
-                ros : props.rosConnection,
-                name : '/vva_robot_management/start_mapping',
-                serviceType : 'std_srvs/Empty'
-              });
-            
-              let request = new window.ROSLIB.ServiceRequest({});
-            
-              startMappingClient.callService(request, function(result) {
-                console.log('Result for the start_mapping service call: ' + result);
-              });
-            }
-            else {
-              alert("Connection to ROS failed.");
-            }
-          }}
+          classes={{label: classes.label, root: classes.prueba}}
+          onClick={someMethod}
         >
           Start
         </Button>
@@ -152,6 +163,8 @@ export default function ControlButtons(props) {
                   serviceType : 'std_srvs/Empty'
                 });
               
+                
+
                 let request = new window.ROSLIB.ServiceRequest({});
               
                 stopMappingClient.callService(request, function(result) {
@@ -162,13 +175,19 @@ export default function ControlButtons(props) {
                 alert("Connection to ROS failed.");
               }
             }}
-          >
+          >  
             Done
           </Button>
           <Button size="large" variant="contained"
             classes={{label: classes.label, root: classes.restart}}
-            onClick={() => {
+            onClick={someMethod}
+            //onClick={() => { 
+
+              /*
               if (props.connected) {
+
+                //ReactDOM.render(<Body variable = "texto" />, document.getElementById('root'));
+
                 // Calling reset rtabmap map
                 let resetMapClient = new window.ROSLIB.Service({
                   ros : props.rosConnection,
@@ -181,11 +200,22 @@ export default function ControlButtons(props) {
                 resetMapClient.callService(request, function(result) {
                   console.log('Result for the rtabmap reset service call: ' + result);
                 });
+
+                {this.someMethod}
+
+                
+
+                
+
+             
+                
               }
               else {
                 alert("Connection to ROS failed.");
               }
-            }}
+              */
+              
+            //}}
           >
             Restart
           </Button>
