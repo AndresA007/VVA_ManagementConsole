@@ -129,7 +129,7 @@ export default function Body(props) {
        <div>
 
         <div>
-          {state == 0 ?
+          {state === 0 ?
               
             <div>
               <Map rosConnection={props.rosConnection} isMobile={isMobile} />
@@ -155,7 +155,7 @@ export default function Body(props) {
       }
 
       <ControlButtons rosConnection={props.rosConnection} connected={isConnected} isMobile={isMobile} handler={handler} />
-        
+
     </div>
   );
 }

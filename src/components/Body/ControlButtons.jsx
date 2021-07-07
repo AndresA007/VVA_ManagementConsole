@@ -16,7 +16,7 @@ let stateBTN = 0;
 export default function ControlButtons(props) {
 
   //console.log(props);
-  let stateBTN = 0;
+ 
   
    function someMethod() {
     props.handler(2);
@@ -182,132 +182,138 @@ export default function ControlButtons(props) {
 
   return (
 
-    <div>
-      {stateBTN === 0 ?
+    
+      
 
         <div>
-          {vvaRMStatusHook === VVA_RM_IDLE ?
-            <Button size="large" variant="contained" color="primary"
-              classes={{label: classes.label, root: classes.prueba}}
-              onClick={() => {
-                if (props.connected) {
-                  // Calling start_mapping service
-                  let startMappingClient = new window.ROSLIB.Service({
-                    ros : props.rosConnection,
-                    name : '/vva_robot_management/start_mapping',
-                    serviceType : 'std_srvs/Empty'
-                  });
+          {stateBTN === 0 ?
 
-                  let request = new window.ROSLIB.ServiceRequest({});
-                
-                  startMappingClient.callService(request, function(result) {
-                    console.log('Result for the start_mapping service call: ' + result);
-                  });
-
-                }
-                else {
-                  alert("Connection to ROS failed.");
-                }
-
-              }}
-            >
-              Start
-            </Button>
-            :
             <div>
-              <Button size="large" variant="contained" color="primary"
-                classes={{label: classes.label, root: classes.done}}
-                onClick={() => {
-                  if (props.connected) {
-                    // Calling stop_mapping service
-                    let stopMappingClient = new window.ROSLIB.Service({
-                      ros : props.rosConnection,
-                      name : '/vva_robot_management/stop_mapping',
-                      serviceType : 'std_srvs/Empty'
-                    });
-                  
+              {vvaRMStatusHook === VVA_RM_IDLE ?
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.prueba}}
+                  onClick={() => {
+                    if (props.connected) {
+                      // Calling start_mapping service
+                      let startMappingClient = new window.ROSLIB.Service({
+                        ros : props.rosConnection,
+                        name : '/vva_robot_management/start_mapping',
+                        serviceType : 'std_srvs/Empty'
+                      });
+
+                      let request = new window.ROSLIB.ServiceRequest({});
                     
+                      startMappingClient.callService(request, function(result) {
+                        console.log('Result for the start_mapping service call: ' + result);
+                      });
 
-                    let request = new window.ROSLIB.ServiceRequest({});
-                  
-                    stopMappingClient.callService(request, function(result) {
-                      console.log('Result for the stop_mapping service call: ' + result);
-                    });
+                    }
+                    else {
+                      alert("Connection to ROS failed.");
+                    }
 
-                    
-                  }
-                  else {
-                    alert("Connection to ROS failed.");
-                  }
-                }}
-              >  
-                Done
-              </Button>
-              <Button size="large" variant="contained"
-                classes={{label: classes.label, root: classes.restart}}
-                onClick={() => { 
+                  }}
+                >
+                  Start
+                </Button>
+                :
+                <div>
+                  <Button size="large" variant="contained" color="primary"
+                    classes={{label: classes.label, root: classes.done}}
+                    onClick={() => {
+                      if (props.connected) {
+                        // Calling stop_mapping service
+                        let stopMappingClient = new window.ROSLIB.Service({
+                          ros : props.rosConnection,
+                          name : '/vva_robot_management/stop_mapping',
+                          serviceType : 'std_srvs/Empty'
+                        });
+                      
+                        
 
-                  
-                  if (props.connected) {
+                        let request = new window.ROSLIB.ServiceRequest({});
+                      
+                        stopMappingClient.callService(request, function(result) {
+                          console.log('Result for the stop_mapping service call: ' + result);
+                        });
 
-                    //ReactDOM.render(<Body variable = "texto" />, document.getElementById('root'));
+                        stateBTN = 2;
+                        someMethod();
 
-                    // Calling reset rtabmap map
-                    let resetMapClient = new window.ROSLIB.Service({
-                      ros : props.rosConnection,
-                      name : '/rtabmap_jnano/reset',
-                      serviceType : 'std_srvs/Empty'
-                    });
-                  
-                    let request = new window.ROSLIB.ServiceRequest({});
-                  
-                    resetMapClient.callService(request, function(result) {
-                      console.log('Result for the rtabmap reset service call: ' + result);
-                    });
-                    
-                  }
-                  else {
-                    alert("Connection to ROS failed.");
-                  }
-                  
-                  
-                }}
-              >
-                Restart
-              </Button>
-              <div style={props.isMobile ? styles.mobile.text : styles.desktop.text}>Map size: {mapSizeMB} MB</div>
+                      }
+                      else {
+                        alert("Connection to ROS failed.");
+                      }
+                    }}
+                  >  
+                    Done
+                  </Button>
+                  <Button size="large" variant="contained"
+                    classes={{label: classes.label, root: classes.restart}}
+                    onClick={() => { 
+
+                      
+                      if (props.connected) {
+
+                        //ReactDOM.render(<Body variable = "texto" />, document.getElementById('root'));
+
+                        // Calling reset rtabmap map
+                        let resetMapClient = new window.ROSLIB.Service({
+                          ros : props.rosConnection,
+                          name : '/rtabmap_jnano/reset',
+                          serviceType : 'std_srvs/Empty'
+                        });
+                      
+                        let request = new window.ROSLIB.ServiceRequest({});
+                      
+                        resetMapClient.callService(request, function(result) {
+                          console.log('Result for the rtabmap reset service call: ' + result);
+                        });
+                        
+                      }
+                      else {
+                        alert("Connection to ROS failed.");
+                      }
+                      
+                      
+                    }}
+                  >
+                    Restart
+                  </Button>
+                  <div style={props.isMobile ? styles.mobile.text : styles.desktop.text}>Map size: {mapSizeMB} MB</div>
+                </div>
+              }
             </div>
-          }
+
+            :
+
+            <div>
+
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.restartPoint}}
+                  onClick={() => {
+
+                    }
+                  }
+                >
+                  PRestart 
+                </Button>
+
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.donePoint}}
+                  onClick={() => {
+
+                    }
+                  }
+                >
+                  Pdone
+                </Button>  
+
+            </div>  
+
+            }
         </div>
        
-       :
-
-        <div>
-
-            <Button size="large" variant="contained" color="primary"
-              classes={{label: classes.label, root: classes.restartPoint}}
-              onClick={() => {
-
-                }
-              }
-            >
-              PRestart 
-            </Button>
-
-            <Button size="large" variant="contained" color="primary"
-              classes={{label: classes.label, root: classes.donePoint}}
-              onClick={() => {
-
-                }
-              }
-            >
-              Pdone
-            </Button>  
-
-        </div>  
-
-    }
-  </div>      
   );
 }
     
