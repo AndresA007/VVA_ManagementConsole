@@ -1,8 +1,6 @@
 import React, { useEffect, useState} from "react";
 //import ReactDOM from "react-dom";
 import { makeStyles, Button } from "@material-ui/core";
-//import body from "./Body";
-
 
 
 
@@ -17,11 +15,22 @@ export default function ControlButtons(props) {
 
   //console.log(props);
  
-  
+  //Cambiar el estado del Body para pasar al Map_patrolling
    function someMethod() {
     props.handler(2);
     
   }
+
+  /*
+  //Cambiar el estado de Map_patrolling para dar por finalizado los puntos seleccionados
+  function donePoints() {
+    props.handlerp(2);
+    
+  }
+  */
+  
+
+
   
 
   // Hook to update the DOM each time the map file size is received
@@ -74,27 +83,7 @@ export default function ControlButtons(props) {
       top: "170px",
       right: "26%",
       width: "170px"
-    },
-    restartPoint: {
-      position: "absolute",
-      top: "170px",
-      right: "4%",
-      width: "170px"
-    },
-    donePoint: {
-      position: "absolute",
-      top: "170px",
-      right: "4%",
-      width: "170px"
     }
-    
-    /*
-    prueba: {
-      position: "absolute",
-      top: "170px",
-      right: "26%",
-      width: "170px"
-    }*/
   };
 
   // Create the styles for Material UI components for desktop
@@ -113,27 +102,7 @@ export default function ControlButtons(props) {
       top: "500px",
       left: "340px",
       width: "100px"
-    },
-    restartPoint: {
-      position: "absolute",
-      top: "550px",
-      left: "340px",
-      width: "100px"
-    },
-    donePoint: {
-      position: "absolute",
-      top: "500px",
-      left: "340px",
-      width: "100px"
-    },
-
-    /*
-    prueba: {
-      position: "absolute",
-      top: "500px",
-      left: "340px",
-      width: "100px"
-    } */
+    }
   };
   
   const useStyles = makeStyles(theme => {
@@ -191,7 +160,7 @@ export default function ControlButtons(props) {
             <div>
               {vvaRMStatusHook === VVA_RM_IDLE ?
                 <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.prueba}}
+                  classes={{label: classes.label, root: classes.done}}
                   onClick={() => {
                     if (props.connected) {
                       // Calling start_mapping service
@@ -289,25 +258,7 @@ export default function ControlButtons(props) {
 
             <div>
 
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.restartPoint}}
-                  onClick={() => {
-
-                    }
-                  }
-                >
-                  PRestart 
-                </Button>
-
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.donePoint}}
-                  onClick={() => {
-
-                    }
-                  }
-                >
-                  Pdone
-                </Button>  
+                
 
             </div>  
 

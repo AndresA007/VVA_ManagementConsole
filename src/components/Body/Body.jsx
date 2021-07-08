@@ -20,7 +20,6 @@ export default function Body(props) {
     }
 
     console.log(state);
-
   
   
 
@@ -138,7 +137,7 @@ export default function Body(props) {
             </div>
               :
             <div>
-              <MapPatrolling rosConnection={props.rosConnection} isMobile={isMobile} />
+              <MapPatrolling rosConnection={props.rosConnection} isMobile={isMobile}/>
             </div>
           }
         </div>
@@ -150,9 +149,10 @@ export default function Body(props) {
       }
       
       {isMobile ?
-          <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} /> :
-          <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
-      }
+                  <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} /> :
+                  <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
+              }
+      
 
       <ControlButtons rosConnection={props.rosConnection} connected={isConnected} isMobile={isMobile} handler={handler} />
 

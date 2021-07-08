@@ -1,12 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import { makeStyles, Button } from "@material-ui/core";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
+let statePoints = 0;
 
+const ref = 0;
 
 export default function MapPatrolling(props) {
+
+  
+ 
+  const Ref = () => {
+
+    ref = useRef(null);
+
+    const handleRef = () => {
+      ref = "2";
+    };
+    return(
+
+      <h1 onClick={handleRef}>Done new </h1>
+
+    );
+
+  };
+  
+  console.log(ref);
+    
+ 
+  
 
   // Hook to be executed after the DOM is rendered
   useEffect(() => {
@@ -133,80 +157,92 @@ export default function MapPatrolling(props) {
 
     //************ PUNTERO */
  
-    
-    // Callback functions when there is mouse interaction with the polygon
-		var clickedPolygon = false;
-		var selectedPointIndex = null;
-
-		var pointCallBack = function(type, event, index) {
-			if (type === 'mousedown') {
-				if (event.nativeEvent.shiftKey === true) {
-					polygon.remPoint(index);
-				}
-				else {
-					selectedPointIndex = index;
-				}
-			}
-			clickedPolygon = true;
-		};
-
-    
-		var lineCallBack = function(type, event, index) {
-			if (type === 'mousedown') {
-				if (event.nativeEvent.ctrlKey === true) {
-					polygon.splitLine(index);
-				}
-			}
-			clickedPolygon = true;
-		}; 
-
-		// Create the polygon
-		var polygon = new window.ROS2D.PolygonMarker({
-			lineColor : window.createjs.Graphics.getRGB(100, 100, 255, 1),
-			pointCallBack : pointCallBack,
-			lineCallBack : lineCallBack
-		});
-	
-		// Add the polygon to the viewer
-    viewer.scene.addChild(polygon);
-
-		// Event listeners for mouse interaction with the stage
-		viewer.scene.mouseMoveOutside = false; // doesn't seem to work
-
-    
-		viewer.scene.addEventListener('stagemousemove', function(event) {
-			// Move point when it's dragged
-			if (selectedPointIndex !== null) {
-				var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
-				polygon.movePoint(selectedPointIndex, pos);
-			}
-		});
-	
     let coord = [];
 
-		viewer.scene.addEventListener('stagemouseup', function(event) {
-			// Add point when not clicked on the polygon
-			if (selectedPointIndex !== null) {
-				selectedPointIndex = null;
-			}
-			else if (viewer.scene.mouseInBounds === true && clickedPolygon === false) {
-				let pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+    let poseFramed = [];
+    let poseFramed2 = [];
+
+    //Si cambia de estado, cuando se de por terminado la cantidad de puntos escogidos
+    if(statePoints === 0){
+
+        // Callback functions when there is mouse interaction with the polygon
+        var clickedPolygon = false;
+        var selectedPointIndex = null;
+
+        var pointCallBack = function(type, event, index) {
+          if (type === 'mousedown') {
+            if (event.nativeEvent.shiftKey === true) {
+              polygon.remPoint(index);
+            }
+            else {
+              selectedPointIndex = index;
+            }
+          }
+          clickedPolygon = true;
+        };
+
         
-        //console.log(pos); 
+        var lineCallBack = function(type, event, index) {
+          if (type === 'mousedown') {
+            if (event.nativeEvent.ctrlKey === true) {
+              polygon.splitLine(index);
+            }
+          }
+          clickedPolygon = true;
+        }; 
 
-				polygon.addPoint(pos);
+        // Create the polygon
+        var polygon = new window.ROS2D.PolygonMarker({
+          lineColor : window.createjs.Graphics.getRGB(100, 100, 255, 1),
+          pointCallBack : pointCallBack,
+          lineCallBack : lineCallBack
+        });
+      
+        // Add the polygon to the viewer
+        viewer.scene.addChild(polygon);
 
-        coord.push(pos);
+        // Event listeners for mouse interaction with the stage
+        viewer.scene.mouseMoveOutside = false; // doesn't seem to work
 
-        //arrayCoor(coord);
+        
+        viewer.scene.addEventListener('stagemousemove', function(event) {
+          // Move point when it's dragged
+          if (selectedPointIndex !== null) {
+            var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+            polygon.movePoint(selectedPointIndex, pos);
+          }
+        });
+
+
+        viewer.scene.addEventListener('stagemouseup', function(event) {
+          // Add point when not clicked on the polygon
+          if (selectedPointIndex !== null) {
+            selectedPointIndex = null;
+          }
+          else if (viewer.scene.mouseInBounds === true && clickedPolygon === false) {
+            let pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+            
+            //console.log(pos); 
+
+            polygon.addPoint(pos);
+
+            coord.push(pos);
+
+            //arrayCoor(coord);
+            //tourMapPoint(coord);
+          }
+          clickedPolygon = false;
+        }); 
+
+       }else{
         tourMapPoint(coord);
-			}
-			clickedPolygon = false;
-		}); 
+       } 
 
     var cont = 0;
-    var cont2 = 0;
-    var cont3 = 1;
+    //var cont2 = 0;
+    //var cont3 = 1;
+
+    /*
     function arrayCoor(c){  // ------------------------------------------------
       
       console.log(coord.length);
@@ -219,12 +255,56 @@ export default function MapPatrolling(props) {
       }
       
       return;
-    } 
+    } */
 
     
 
-    let poseFramed = [];
-    let poseFramed2 = [];
+    
+
+    function tourMapPoint(c){
+
+
+        console.log(c.length);
+
+        while(cont <= c.length){
+
+          console.log("hola");
+
+          poseFramed = { pose:{     position: c[cont],
+                                    orientation: {x: 0, y: 0,z: 0, w: 0}
+                                  },
+                            frame: "map"
+
+          }
+          poseFramed2.push(poseFramed);
+          cont++;
+        }
+
+          let startItineraryClient = new window.ROSLIB.Service({
+            ros : props.rosConnection,
+            name : '/vva_navigation_intent/start_itinerary',
+            serviceType : 'vva_user_intent/VVAGoalsItinerary'
+          });
+
+          
+          let request = new window.ROSLIB.ServiceRequest({
+            goals : poseFramed2,
+          
+          });
+        
+          startItineraryClient.callService(request, function(result) {
+                console.log('Result for service call on startItinerary:'
+                + result);
+                });
+
+          cont = 0;
+          statePoints = 0;
+      
+      return;
+    }
+
+    /*
+    // Se indica el numero de puntos a tomar:
 
     function tourMapPoint(c){
 
@@ -273,6 +353,7 @@ export default function MapPatrolling(props) {
       
       return;
     }
+    */
 
     //*********** */
 
@@ -335,10 +416,29 @@ export default function MapPatrolling(props) {
         borderRadius: "10%",
         lineHeight: "0.8"
       }
+    },
+    restartPoint: {
+      position: "relative",
+      top: "600px",
+      left: "240px",
+      width: "100px"
+    },
+    donePoint: {
+      position: "absolute",
+      top: "100px",
+      left: "240px",
+      width: "50px"
+    },
+    initialPosition: {
+      position: "absolute",
+      top: "400px",
+      left: "240px",
+      width: "100px"
     }
   };
 
   return (
+    <div>
     <TransformWrapper>
       {({ zoomIn, zoomOut }) => (
         <div>
@@ -356,15 +456,55 @@ export default function MapPatrolling(props) {
                 <ZoomOutIcon classes={{root: classes.desktopZoomIcon}} />
               }
             </Button>
+
           </div>
           <div style={styles.mapContainer}>
             <TransformComponent>
               <div style={props.isMobile ? {} : styles.desktop.map} id="map"></div>
             </TransformComponent>
           </div>
+
         </div>
       )}
+
     </TransformWrapper>
+
+    <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.restartPoint}}
+                  onClick={() => {
+
+                  }}
+                >
+                  Done 
+                </Button>
+
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.donePoint}}
+                  onClick={() => {
+
+                    }
+                  }
+                >
+                  Clear
+                </Button>  
+
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.initialPosition}}
+                  onClick={() => {
+
+                    }
+                  }
+                >
+                  Set initial position
+                </Button>   
+
+
+
+    </div>
+    
+    
+
   );
+ 
 }
 
