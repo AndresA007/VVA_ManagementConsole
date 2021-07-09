@@ -1,46 +1,39 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import { makeStyles, Button } from "@material-ui/core";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
-let statePoints = 0;
+let coord = [];
 
-const ref = 0;
+let poseFramed = [];
+let poseFramed2 = [];
 
-export default function MapPatrolling(props) {
+var cont = 0;
 
+
+export default function MapPatrolling(props) { 
   
- 
-  const Ref = () => {
+  //const [statePoints, setStatePoints] = useState(0);
 
-    ref = useRef(null);
+  //function handlerp(param) {
+  //  setStatePoints(param);
+  //  return;
+  //  }
 
-    const handleRef = () => {
-      ref = "2";
-    };
-    return(
-
-      <h1 onClick={handleRef}>Done new </h1>
-
-    );
-
-  };
-  
-  console.log(ref);
-    
- 
-  
 
   // Hook to be executed after the DOM is rendered
   useEffect(() => {
+
+    //console.log(`la cuenta es ${statePoints}`);
+
     // Create the main viewer.
-    let viewer = new window.ROS2D.Viewer({
-      divID : 'map',
-      width : window.innerWidth,
-      height : window.innerHeight,
-      background: '#222831'
-    });
+  let viewer = new window.ROS2D.Viewer({
+    divID : 'map',
+    width : window.innerWidth,
+    height : window.innerHeight,
+    background: '#222831'
+  });
     
     // Setup the map client.
     let gridClient = new window.ROS2D.OccupancyGridClient({
@@ -156,18 +149,13 @@ export default function MapPatrolling(props) {
 
 
     //************ PUNTERO */
- 
-    let coord = [];
 
-    let poseFramed = [];
-    let poseFramed2 = [];
-
-    //Si cambia de estado, cuando se de por terminado la cantidad de puntos escogidos
-    if(statePoints === 0){
 
         // Callback functions when there is mouse interaction with the polygon
         var clickedPolygon = false;
         var selectedPointIndex = null;
+
+        var num = 0;
 
         var pointCallBack = function(type, event, index) {
           if (type === 'mousedown') {
@@ -181,25 +169,26 @@ export default function MapPatrolling(props) {
           clickedPolygon = true;
         };
 
-        
+        /*
         var lineCallBack = function(type, event, index) {
           if (type === 'mousedown') {
-            if (event.nativeEvent.ctrlKey === true) {
-              polygon.splitLine(index);
-            }
+            
+                if (event.nativeEvent.ctrlKey === true) {
+                  polygon.splitLine(index);
+                }
           }
           clickedPolygon = true;
-        }; 
+        }; */
 
         // Create the polygon
         var polygon = new window.ROS2D.PolygonMarker({
           lineColor : window.createjs.Graphics.getRGB(100, 100, 255, 1),
           pointCallBack : pointCallBack,
-          lineCallBack : lineCallBack
+         // lineCallBack : lineCallBack
         });
       
         // Add the polygon to the viewer
-        viewer.scene.addChild(polygon);
+        //viewer.scene.addChild(polygon);
 
         // Event listeners for mouse interaction with the stage
         viewer.scene.mouseMoveOutside = false; // doesn't seem to work
@@ -215,30 +204,59 @@ export default function MapPatrolling(props) {
 
 
         viewer.scene.addEventListener('stagemouseup', function(event) {
-          // Add point when not clicked on the polygon
-          if (selectedPointIndex !== null) {
-            selectedPointIndex = null;
-          }
-          else if (viewer.scene.mouseInBounds === true && clickedPolygon === false) {
-            let pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+          
+            // Add point when not clicked on the polygon
+            if (selectedPointIndex !== null) {
+              selectedPointIndex = null;
+            }
+            else if (viewer.scene.mouseInBounds === true && clickedPolygon === false) {
+              let pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+              
+              let posx = (pos.x);
+              let posy = (-pos.y); //El menos porque sin el, lo toma contrario
+
+
+              //console.log(posx);
+              //console.log(posy);
+
+              //console.log(pos); 
+
+              polygon.addPoint(pos);
+
+              coord.push(pos);
+
+              //arrayCoor(coord);
+              //tourMapPoint(coord);
+
+
+              //----- Poner los numero segun el orden de las coordenadas en la scene */
+
+            var numer = "n"+num+".png";
+            //console.log(numer);
+
+            // Insert the texto
+            let numIcon = new window.ROS2D.NavigationImage({
+              size: 0.30,
+              image: "images/numbers/"+numer
+            });
+              numIcon.x = posx;
+              numIcon.y = posy;
+              viewer.scene.addChild(numIcon);
+
+              //console.log(num);
+            num++;
+
+            //-------------------
+
+            }
+          
+            clickedPolygon = false;
+
             
-            //console.log(pos); 
-
-            polygon.addPoint(pos);
-
-            coord.push(pos);
-
-            //arrayCoor(coord);
-            //tourMapPoint(coord);
-          }
-          clickedPolygon = false;
         }); 
+       
 
-       }else{
-        tourMapPoint(coord);
-       } 
-
-    var cont = 0;
+    
     //var cont2 = 0;
     //var cont3 = 1;
 
@@ -259,10 +277,12 @@ export default function MapPatrolling(props) {
 
     
 
-    
+    /*
 
-    function tourMapPoint(c){
+    function tourMapPoint(){
 
+
+        let c = coord;
 
         console.log(c.length);
 
@@ -302,6 +322,7 @@ export default function MapPatrolling(props) {
       
       return;
     }
+    */
 
     /*
     // Se indica el numero de puntos a tomar:
@@ -363,6 +384,97 @@ export default function MapPatrolling(props) {
 
   }, [props.rosConnection, props.isMobile]);
 
+  //********** */
+
+  
+  function tourMapPoint(){
+
+
+    let c = coord;
+
+    console.log(c.length);
+
+    while(cont <= (c.length - 1)){
+
+      console.log("hola");
+
+      poseFramed = { pose:{     position: c[cont],
+                                orientation: {x: 0, y: 0,z: 0, w: 0}
+                              },
+                        frame: "map"
+
+      }
+      poseFramed2.push(poseFramed);
+      cont++;
+    }
+
+    console.log(poseFramed2);
+
+      // Calling start_itinerary service
+      let startItineraryClient = new window.ROSLIB.Service({
+        ros : props.rosConnection,
+        name : '/vva_navigation_intent/start_itinerary',
+        serviceType : 'vva_user_intent/VVAGoalsItinerary'
+      });
+
+      
+      let request = new window.ROSLIB.ServiceRequest({
+        goals : poseFramed2,
+      
+      });
+    
+      startItineraryClient.callService(request, function(result) {
+            console.log('Result for service call on startItinerary:'
+            + result);
+            });
+
+
+      
+
+      cont = 0;
+      //statePoints = 0;
+  
+   
+
+    return;
+  }
+
+  function startNavigation(){
+
+    // Calling start_navigation service
+    let startNavigationClient = new window.ROSLIB.Service({
+      ros : props.rosConnection,
+      name : '/vva_robot_management/start_navigation',
+      serviceType : 'std_srvs/Empty'
+    });
+
+    let request2 = new window.ROSLIB.ServiceRequest({});
+  
+    startNavigationClient.callService(request2, function(result) {
+      console.log('Result for the start_navigation service call: ' + result);
+    });
+
+  }
+
+  function stopNavigation(){
+
+    // Calling start_navigation service
+    let stopNavigationClient = new window.ROSLIB.Service({
+      ros : props.rosConnection,
+      name : '/vva_robot_management/stop_navigation',
+      serviceType : 'std_srvs/Empty'
+    });
+
+    let request2 = new window.ROSLIB.ServiceRequest({});
+  
+    stopNavigationClient.callService(request2, function(result) {
+      console.log('Result for the stop_navigation service call: ' + result);
+    });
+
+  }
+
+//************* */
+
 
   // Create the styles for Material UI components
   const materialUIStyles = {
@@ -375,6 +487,26 @@ export default function MapPatrolling(props) {
       fontSize: "2rem",
       position: "relative",
       right: "15px"
+    },donePoint: {
+      position: "absolute",
+      top: "470px",
+      left: "340px",
+      width: "100px"
+    },stopNavigationBTN: {
+      position: "absolute",
+      top: "570px",
+      left: "340px",
+      width: "100px"
+    },initialPosition: {
+      position: "absolute",
+      top: "620px",
+      left: "340px",
+      width: "100px"
+    },startNavigationBTN: {
+      position: "absolute",
+      top: "520px",
+      left: "340px",
+      width: "100px"
     }
   };
 
@@ -417,13 +549,13 @@ export default function MapPatrolling(props) {
         lineHeight: "0.8"
       }
     },
-    restartPoint: {
-      position: "relative",
-      top: "600px",
-      left: "240px",
-      width: "100px"
-    },
     donePoint: {
+      position: "absolute",
+      top: "100px",
+      left: "240px",
+      width: "50px"
+    },
+    stopNavigationBTN: {
       position: "absolute",
       top: "100px",
       left: "240px",
@@ -431,13 +563,20 @@ export default function MapPatrolling(props) {
     },
     initialPosition: {
       position: "absolute",
-      top: "400px",
+      top: "100px",
       left: "240px",
-      width: "100px"
+      width: "50px"
+    },
+    startNavigationBTN: {
+      position: "absolute",
+      top: "100px",
+      left: "240px",
+      width: "50px"
     }
   };
 
   return (
+
     <div>
     <TransformWrapper>
       {({ zoomIn, zoomOut }) => (
@@ -469,35 +608,35 @@ export default function MapPatrolling(props) {
 
     </TransformWrapper>
 
-    <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.restartPoint}}
-                  onClick={() => {
-
-                  }}
-                >
-                  Done 
-                </Button>
-
                 <Button size="large" variant="contained" color="primary"
                   classes={{label: classes.label, root: classes.donePoint}}
                   onClick={() => {
 
-                    }
-                  }
-                >
-                  Clear
-                </Button>  
+                    tourMapPoint();
+                  }}
+                  >
+                  Done 
+                </Button>
 
                 <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.initialPosition}}
+                  classes={{label: classes.label, root: classes.stopNavigationBTN}}
                   onClick={() => {
+                    //handlerp(2);
+                    stopNavigation();
+                  }}
+                  >
+                  Stop
+                </Button>
 
-                    }
-                  }
-                >
-                  Set initial position
-                </Button>   
-
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.startNavigationBTN}}
+                  onClick={() => {
+                    
+                    startNavigation();
+                  }}
+                  >
+                  Start
+                </Button>
 
 
     </div>

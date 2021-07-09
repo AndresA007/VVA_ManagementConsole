@@ -132,7 +132,7 @@ export default function Body(props) {
               
             <div>
               <Map rosConnection={props.rosConnection} isMobile={isMobile} />
-              <ArrowsPad rosConnection={props.rosConnection} isMobile={isMobile} />
+              
 
             </div>
               :
@@ -149,11 +149,11 @@ export default function Body(props) {
       }
       
       {isMobile ?
-                  <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} /> :
-                  <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
-              }
+          <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} /> :
+          <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
+      }
       
-
+      <ArrowsPad rosConnection={props.rosConnection} isMobile={isMobile} />
       <ControlButtons rosConnection={props.rosConnection} connected={isConnected} isMobile={isMobile} handler={handler} />
 
     </div>

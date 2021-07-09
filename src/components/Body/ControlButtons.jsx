@@ -16,8 +16,8 @@ export default function ControlButtons(props) {
   //console.log(props);
  
   //Cambiar el estado del Body para pasar al Map_patrolling
-   function someMethod() {
-    props.handler(2);
+   function someMethod(c) {
+    props.handler(c);
     
   }
 
@@ -53,7 +53,7 @@ export default function ControlButtons(props) {
       setMapSizeMB(mapFileSizeMB.data);
     });
 
-    // setup a listener for the ROS status topic
+    // setup a listener for the ROS status topic                      /********** */
     let vvaRMStatusListener = new window.ROSLIB.Topic({
       ros : props.rosConnection,
       name : '/vva_robot_management/status',
@@ -100,6 +100,12 @@ export default function ControlButtons(props) {
     restart: {
       position: "absolute",
       top: "500px",
+      left: "340px",
+      width: "100px"
+    },
+    initialPosition: {
+      position: "absolute",
+      top: "620px",
       left: "340px",
       width: "100px"
     }
@@ -207,7 +213,7 @@ export default function ControlButtons(props) {
                         });
 
                         stateBTN = 2;
-                        someMethod();
+                        someMethod(2);
 
                       }
                       else {
@@ -258,6 +264,20 @@ export default function ControlButtons(props) {
 
             <div>
 
+              
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.initialPosition}}
+                  onClick={() => {
+
+
+                    // ********* FALTA ACOMODAR PARA QUE LIMPIE TODOS LOS OBJETOS DE Map_patrolling.jsx *********
+
+                    //someMethod(3);
+                    
+                  }}
+                  >
+                  Position
+                </Button>
                 
 
             </div>  
