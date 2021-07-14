@@ -4,22 +4,34 @@ import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import { makeStyles, Button } from "@material-ui/core";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
+//****** Variables a utilizar para las coordenadas */
 let coord = [];
+
+let posx;
+let posy;
+let pos;
 
 let poseFramed = [];
 let poseFramed2 = [];
 
 var cont = 0;
+   // ---------- coordenadas y imagen de numeración de las mismas
+let addCoord = 0;
 
+let numIcon = [];
+   // ----------
+
+//****** */
 
 export default function MapPatrolling(props) { 
   
-  //const [statePoints, setStatePoints] = useState(0);
+  //Para remover las numeraciones de las coordenadas de la scene
+  const [removeImage, setRemoveImage] = useState(0);
 
-  //function handlerp(param) {
-  //  setStatePoints(param);
-  //  return;
-  //  }
+  function removeIm(param){
+    setRemoveImage(param);
+  }
+
 
 
   // Hook to be executed after the DOM is rendered
@@ -203,6 +215,7 @@ export default function MapPatrolling(props) {
         });
 
 
+
         viewer.scene.addEventListener('stagemouseup', function(event) {
           
             // Add point when not clicked on the polygon
@@ -210,11 +223,10 @@ export default function MapPatrolling(props) {
               selectedPointIndex = null;
             }
             else if (viewer.scene.mouseInBounds === true && clickedPolygon === false) {
-              let pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+              pos = viewer.scene.globalToRos(event.stageX, event.stageY);
               
-              let posx = (pos.x);
-              let posy = (-pos.y); //El menos porque sin el, lo toma contrario
-
+              posx = (pos.x);
+              posy = (-pos.y); //El menos porque sin el, lo toma contrario
 
               //console.log(posx);
               //console.log(posy);
@@ -222,39 +234,88 @@ export default function MapPatrolling(props) {
               //console.log(pos); 
 
               polygon.addPoint(pos);
+             
 
-              coord.push(pos);
+              // -------- Para dejar de recibir coordenadas si se presiono Done -----
 
-              //arrayCoor(coord);
-              //tourMapPoint(coord);
+                if(addCoord === 0){  //Si es diferente de cero, se presiono BTN Done
 
+                  console.log("coord:"+coord.length);
 
-              //----- Poner los numero segun el orden de las coordenadas en la scene */
+                  if(coord.length === 0){ //Si se le dio BTN Clear las coordenadas vuelven a numerar desde la posicion inicial (0)
 
-            var numer = "n"+num+".png";
-            //console.log(numer);
+                    num = 0;
+                  }
 
-            // Insert the texto
-            let numIcon = new window.ROS2D.NavigationImage({
-              size: 0.30,
-              image: "images/numbers/"+numer
-            });
-              numIcon.x = posx;
-              numIcon.y = posy;
-              viewer.scene.addChild(numIcon);
+                  coord.push(pos);
 
-              //console.log(num);
-            num++;
+                  //----- Poner los numero segun el orden de las coordenadas en la scene 
+    
+                  var numer = "n"+num+".png";
+                  //console.log(numer);
+      
+                  // Agregarle a cada coordenada su respectiva numeración
+                  numIcon[num] = new window.ROS2D.NavigationImage({
+                    size: 0.30,
+                    image: "images/numbers/"+numer
+                  });
+                    numIcon[num].x = posx;
+                    numIcon[num].y = posy;
+                    viewer.scene.addChild(numIcon[num]); //Agrega cada numeración a la scene
+      
+                    //console.log(num);
+                  num++;
+      
+                  //-------------------
 
-            //-------------------
+                }
+                
+              
+              // ----------    
 
             }
           
             clickedPolygon = false;
+   
+        });
+          
 
+        
+        // ------- Remover la numeracion de las coordenadas y de paso las coordenadas
+        if(removeImage === 2){
+
+              let contC = 0;
+              
+
+              while(contC <= coord.length - 1){
+
+                console.log(numIcon[contC]);
+
+                delete numIcon[contC].image; // Elimina la imagen de la scene --> todas las numeraciones
+                delete numIcon[contC];
+
+                console.log("llego");
+
+                contC++;
             
-        }); 
-       
+              }
+
+              coord.pop(); //Eliminar elementos del array
+
+              coord = []; //ReIniciar el tamaño del vector a 0
+
+              addCoord = 0; //Para volver activar el marcado de coordenadas si se le a dado  BTN Clear
+
+              poseFramed2.pop();
+
+              poseFramed2 = [];
+
+              //console.log("coord:"+coord.length);
+              removeIm(1);
+        }
+        // ------------------
+        
+        
 
     
     //var cont2 = 0;
@@ -382,7 +443,7 @@ export default function MapPatrolling(props) {
 
 
 
-  }, [props.rosConnection, props.isMobile]);
+  }, [props.rosConnection, props.isMobile, removeImage]);
 
   //********** */
 
@@ -439,7 +500,11 @@ export default function MapPatrolling(props) {
     return;
   }
 
+  let opcionPause = 0;
+
   function startNavigation(){
+
+    opcionPause = 0;
 
     // Calling start_navigation service
     let startNavigationClient = new window.ROSLIB.Service({
@@ -458,7 +523,7 @@ export default function MapPatrolling(props) {
 
   function stopNavigation(){
 
-    // Calling start_navigation service
+    // Calling stop_navigation service
     let stopNavigationClient = new window.ROSLIB.Service({
       ros : props.rosConnection,
       name : '/vva_robot_management/stop_navigation',
@@ -472,6 +537,46 @@ export default function MapPatrolling(props) {
     });
 
   }
+
+  
+  function pauseNavigation(){     //**** genera el stop pero no para arrancar --- revisar */
+
+    if(opcionPause == 0){
+
+        // Calling stop_navigation service --> Robot
+        let stopNavigationClient = new window.ROSLIB.Service({
+          ros : props.rosConnection,
+          name : 'vva_navigation_intent/stop_navigation',
+          serviceType : 'vva_msgs/VVAVoiceCommandIntent'
+        });
+
+        let request = new window.ROSLIB.ServiceRequest({});
+      
+        stopNavigationClient.callService(request, function(result) {
+          console.log('Result for the stop_navigation service call: ' + result);
+        });
+
+        // Calling stop_navigation service --> Stack
+        let stopNavigationStackClient = new window.ROSLIB.Service({
+          ros : props.rosConnection,
+          name : '/vva_robot_management/stop_navigation',
+          serviceType : 'std_srvs/Empty'
+        });
+
+        let request2 = new window.ROSLIB.ServiceRequest({});
+      
+        stopNavigationStackClient.callService(request2, function(result) {
+          console.log('Result for the stop_navigation Stack service call: ' + result);
+        });
+
+        opcionPause = 1;
+
+    }
+
+
+  }
+
+
 
 //************* */
 
@@ -506,6 +611,16 @@ export default function MapPatrolling(props) {
       position: "absolute",
       top: "520px",
       left: "340px",
+      width: "100px"
+    },removePointsBTN: {
+      position: "absolute",
+      top: "620px",
+      left: "230px",
+      width: "100px"
+    },pauseNavigationBTN: {
+      position: "absolute",
+      top: "520px",
+      left: "230px",
       width: "100px"
     }
   };
@@ -572,6 +687,18 @@ export default function MapPatrolling(props) {
       top: "100px",
       left: "240px",
       width: "50px"
+    },
+    removePointsBTN: {
+      position: "absolute",
+      top: "100px",
+      left: "140px",
+      width: "50px"
+    },
+    pauseNavigationBTN: {
+      position: "absolute",
+      top: "100px",
+      left: "140px",
+      width: "50px"
     }
   };
 
@@ -612,6 +739,7 @@ export default function MapPatrolling(props) {
                   classes={{label: classes.label, root: classes.donePoint}}
                   onClick={() => {
 
+                    addCoord = 2; // Para dejar de recibir coordenadas dentro del arreglo
                     tourMapPoint();
                   }}
                   >
@@ -621,7 +749,7 @@ export default function MapPatrolling(props) {
                 <Button size="large" variant="contained" color="primary"
                   classes={{label: classes.label, root: classes.stopNavigationBTN}}
                   onClick={() => {
-                    //handlerp(2);
+        
                     stopNavigation();
                   }}
                   >
@@ -631,12 +759,34 @@ export default function MapPatrolling(props) {
                 <Button size="large" variant="contained" color="primary"
                   classes={{label: classes.label, root: classes.startNavigationBTN}}
                   onClick={() => {
-                    
+
                     startNavigation();
                   }}
                   >
                   Start
                 </Button>
+
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.removePointsBTN}}
+                  onClick={() => {
+                    
+                    removeIm(2);
+                  }}
+                  >
+                  Clear
+                </Button>
+
+                <Button size="large" variant="contained" color="primary"
+                  classes={{label: classes.label, root: classes.pauseNavigationBTN}}
+                  onClick={() => {
+                    
+                    pauseNavigation();
+                    
+                  }}
+                  >
+                  Pause
+                </Button>
+
 
 
     </div>
