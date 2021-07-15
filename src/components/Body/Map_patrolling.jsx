@@ -16,6 +16,13 @@ let poseFramed = [];
 let poseFramed2 = [];
 
 var cont = 0;
+
+   // ----------
+
+let estadoGoals = 0;
+
+   // ----------
+
    // ---------- coordenadas y imagen de numeración de las mismas
 let addCoord = 0;
 
@@ -26,8 +33,6 @@ let numIcon = [];
 let estadoPIni = 0;
 
 let numIconPI;
-
-let coorPIni;
 
 //****** */
 
@@ -52,6 +57,13 @@ export default function MapPatrolling(props) {
 
   function pInic(param){
     setPIni(param);
+  }
+
+  //Boton a usar, si se inicio o no los Goals a marcar
+  const [sGoal, setSGoal] = useState(0);
+
+  function sGoals(param){
+    setSGoal(param);
   }
 
 
@@ -263,7 +275,7 @@ export default function MapPatrolling(props) {
 
                   // -------- Para dejar de recibir coordenadas si se presiono Done -----
 
-                    if(addCoord === 0){  //Si es diferente de cero, se presiono BTN Done
+                    if(addCoord === 0 && estadoGoals === 2){  //Si es diferente de cero, se presiono BTN Done
 
                       console.log("coord:"+coord.length);
 
@@ -625,16 +637,14 @@ export default function MapPatrolling(props) {
   let poseIni;
   let headerPI;
 
-  let arregloPI = new Array(36);
+  let arregloPI = new Array(36); //Crea un arreglo de 36 posiciones
 
   //Generar la posición inicial, para darle ubicación al robot
   function positionIni(){
 
-    //let JS_timestamp = Date().getTime();
+    //console.log(pos);
 
-    console.log(pos);
-
-    let arregloPI2 = arregloPI.fill(0);
+    let arregloPI2 = arregloPI.fill(0); //llena el arreglo de ceros
 
     arregloPI2[0] = 0.25;
     arregloPI2[7] = 0.25;
@@ -654,7 +664,7 @@ export default function MapPatrolling(props) {
 
     }
 
-      // Publishing a Topic
+      // Publishing a Topic   ---> Para dar una posicion de referencia o inicial
       // ------------------
 
       var initialPose = new window.ROSLIB.Topic({
@@ -689,57 +699,156 @@ export default function MapPatrolling(props) {
 //************* */
 
 
-  // Create the styles for Material UI components
-  const materialUIStyles = {
-    mobileZoomIcon: {
-      color: "#a4ebf3",
-      fontSize: "5rem"
-    },
-    desktopZoomIcon: {
-      color: "#a4ebf3",
-      fontSize: "2rem",
-      position: "relative",
-      right: "15px"
-    },donePoint: {
-      position: "absolute",
-      top: "470px",
-      left: "340px",
-      width: "100px"
-    },stopNavigationBTN: {
-      position: "absolute",
-      top: "570px",
-      left: "340px",
-      width: "100px"
-    },initialPosition: {
-      position: "absolute",
-      top: "620px",
-      left: "340px",
-      width: "100px"
-    },addInitialPosition: {
-      position: "absolute",
-      top: "620px",
-      left: "340px",
-      width: "100px"
-    },startNavigationBTN: {
-      position: "absolute",
-      top: "520px",
-      left: "340px",
-      width: "100px"
-    },removePointsBTN: {
-      position: "absolute",
-      top: "520px",
-      left: "340px",
-      width: "100px"
-    },pauseNavigationBTN: {
-      position: "absolute",
-      top: "570px",
-      left: "230px",
-      width: "100px"
-    }
-  };
 
-  const useStyles = makeStyles(theme => materialUIStyles);
-  const classes = useStyles();
+// Create the styles for Material UI components for mobile
+const materialUIMobileStyles = {
+  label: {
+    fontSize: "2.2rem"
+  },
+  mobileZoomIcon: {
+    color: "#a4ebf3",
+    fontSize: "5rem"
+  },
+  desktopZoomIcon: {
+    color: "#a4ebf3",
+    fontSize: "2rem",
+    position: "relative",
+    right: "15px"
+  },
+  startNavigationBTN: {
+    position: "absolute",
+    top: "170px",
+    right: "4%",
+    width: "185px"
+  },
+  donePoint: {
+    position: "absolute",
+    top: "170px",
+    right: "4%",
+    width: "185px"
+  },
+  donePoint2: {
+    position: "absolute",
+    top: "170px",
+    right: "4%",
+    width: "185px"
+  },
+  removePointsBTN: {
+    position: "absolute",
+    top: "170px",
+    right: "26%",
+    width: "185px"
+  },
+  stopNavigationBTN: {
+    position: "absolute",
+    top: "280px",
+    right: "4%",
+    width: "185px"
+  },
+  pauseNavigationBTN: {
+    position: "absolute",
+    top: "280px",
+    right: "26%",
+    width: "185px",
+  },
+  initialPosition: {
+    position: "absolute",
+    top: "390px",
+    right: "4%",
+    width: "185px"
+  },
+  addInitialPosition: {
+    position: "absolute",
+    top: "390px",
+    right: "4%",
+    width: "185px"
+  }
+};
+
+// Create the styles for Material UI components for desktop
+const materialUIDesktopStyles = {
+  label: {
+    fontSize: "0.9rem"
+  },
+  mobileZoomIcon: {
+    color: "#a4ebf3",
+    fontSize: "5rem"
+  },
+  desktopZoomIcon: {
+    color: "#a4ebf3",
+    fontSize: "2rem",
+    position: "relative",
+    right: "15px"
+  },
+  startNavigationBTN: {
+    position: "absolute",
+    top: "550px",
+    left: "340px",
+    width: "100px"
+  },
+  donePoint: {
+    position: "absolute",
+    top: "470px",
+    left: "340px",
+    width: "100px"
+  },
+  donePoint2: {
+    position: "absolute",
+    top: "470px",
+    left: "340px",
+    width: "100px"
+  },
+  removePointsBTN: {
+    position: "absolute",
+    top: "520px",
+    left: "340px",
+    width: "100px"
+  },
+  stopNavigationBTN: {
+    position: "absolute",
+    top: "570px",
+    left: "340px",
+    width: "100px"
+  },
+  pauseNavigationBTN: {
+    position: "absolute",
+    top: "570px",
+    left: "230px",
+    width: "100px",
+  },
+  initialPosition: {
+    position: "absolute",
+    top: "620px",
+    left: "340px",
+    width: "100px"
+  },
+  addInitialPosition: {
+    position: "absolute",
+    top: "620px",
+    left: "340px",
+    width: "100px"
+  }
+  
+};
+
+const useStyles = makeStyles(theme => {
+  if (props.isMobile) {
+    return materialUIMobileStyles;
+  }
+  else {
+    return materialUIDesktopStyles;
+  }
+});
+const classes = useStyles();
+
+
+
+
+
+
+
+//************** */
+
 
   // Styles of map controls
   const styles = {
@@ -776,49 +885,14 @@ export default function MapPatrolling(props) {
         borderRadius: "10%",
         lineHeight: "0.8"
       }
-    },
-    donePoint: {
-      position: "absolute",
-      top: "100px",
-      left: "240px",
-      width: "50px"
-    },
-    stopNavigationBTN: {
-      position: "absolute",
-      top: "100px",
-      left: "240px",
-      width: "50px"
-    },
-    initialPosition: {
-      position: "absolute",
-      top: "100px",
-      left: "240px",
-      width: "50px"
-    },addInitialPosition: {
-      position: "absolute",
-      top: "100px",
-      left: "240px",
-      width: "50px"
-    },
-    startNavigationBTN: {
-      position: "absolute",
-      top: "100px",
-      left: "240px",
-      width: "50px"
-    },
-    removePointsBTN: {
-      position: "absolute",
-      top: "100px",
-      left: "140px",
-      width: "50px"
-    },
-    pauseNavigationBTN: {
-      position: "absolute",
-      top: "100px",
-      left: "140px",
-      width: "50px"
     }
   };
+
+ 
+
+
+
+  //*************** */
 
   return (
 
@@ -873,16 +947,46 @@ export default function MapPatrolling(props) {
                       :
 
                   <div>
-                      <Button size="large" variant="contained" color="primary"
-                        classes={{label: classes.label, root: classes.donePoint}}
-                        onClick={() => {
 
-                          addCoord = 2; // Para dejar de recibir coordenadas dentro del arreglo
-                          tourMapPoint();
-                        }}
-                        >
-                        Done 
-                      </Button>
+                        <div>
+
+                              {sGoal === 0?
+                                    <div>
+                                        <Button size="large" variant="contained" color="primary"
+                                        classes={{label: classes.label, root: classes.donePoint}}
+                                        onClick={() => {
+
+                                          estadoGoals = 2;
+                                          sGoals(2); //Despues de recibir este valor, permite marcar en escene los Goals
+                                          
+                                        }}
+                                        >
+                                        Goals 
+                                        </Button>
+                                    </div>
+                                :
+                                    <div>
+                                        <Button size="large" variant="contained" color="primary"
+                                        classes={{label: classes.label, root: classes.donePoint2}}
+                                        onClick={() => {
+
+                                          estadoGoals = 0;
+                                          addCoord = 2; // Para dejar de recibir coordenadas dentro del arreglo
+                                          sGoals(0); //Despues de recibir este valor, no permite marcar en escene los Goals
+                                          tourMapPoint();
+                                          
+                                        }}
+                                        >
+                                        Done 
+                                        </Button>
+                                        </div>
+
+
+                              }
+
+
+                        </div>
+
 
                       <Button size="large" variant="contained" color="primary"
                         classes={{label: classes.label, root: classes.stopNavigationBTN}}
@@ -900,7 +1004,10 @@ export default function MapPatrolling(props) {
                       <Button size="large" variant="contained" color="primary"
                         classes={{label: classes.label, root: classes.removePointsBTN}}
                         onClick={() => {
-                          
+                                                  //Tambien se podria colocar que despues de
+                                                  //darle BTN done, el BTN Goals desaparezca
+                                                  // y dandole aqui en el BTN clear, vuelva 
+                                                  // a aparecer el BTN Goals 
                           removeIm(2);
                         }}
                         >
@@ -933,7 +1040,7 @@ export default function MapPatrolling(props) {
 
                                 }}
                                 >
-                                Position_Ini
+                                Ini_Pos
                               </Button>
                           </div>
                           :
@@ -951,7 +1058,7 @@ export default function MapPatrolling(props) {
 
                                 }}
                                 >
-                                Add_Position
+                                Add_Pos
                               </Button>
                           </div>
                         }

@@ -8,8 +8,13 @@ import Header from "./Header/Header";
 export default function App() {
 
     // ROS connection address
+  const rosbridgeServerAddress = "ws://192.168.20.34:9090";
+  const videoServerAddress     =      "192.168.20.34";
+
+  /*
   const rosbridgeServerAddress = "ws://127.0.0.1:9090";
   const videoServerAddress     =      "127.0.0.1";
+  */
   
   // Connect to ROS.
   let ros = new window.ROSLIB.Ros({
