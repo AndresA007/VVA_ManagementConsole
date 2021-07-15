@@ -102,13 +102,8 @@ export default function ControlButtons(props) {
       top: "500px",
       left: "340px",
       width: "100px"
-    },
-    initialPosition: {
-      position: "absolute",
-      top: "620px",
-      left: "340px",
-      width: "100px"
     }
+    
   };
   
   const useStyles = makeStyles(theme => {
@@ -263,21 +258,6 @@ export default function ControlButtons(props) {
             :
 
             <div>
-
-              
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.initialPosition}}
-                  onClick={() => {
-
-
-                    // ********* FALTA ACOMODAR PARA QUE LIMPIE TODOS LOS OBJETOS DE Map_patrolling.jsx *********
-
-                    //someMethod(3);
-                    
-                  }}
-                  >
-                  Position
-                </Button>
                 
 
             </div>  

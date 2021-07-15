@@ -3,6 +3,7 @@ import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import { makeStyles, Button } from "@material-ui/core";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+//import time from time;
 
 //****** Variables a utilizar para las coordenadas */
 let coord = [];
@@ -21,6 +22,13 @@ let addCoord = 0;
 let numIcon = [];
    // ----------
 
+   // ---------- activación posición inicial
+let estadoPIni = 0;
+
+let numIconPI;
+
+let coorPIni;
+
 //****** */
 
 export default function MapPatrolling(props) { 
@@ -32,6 +40,19 @@ export default function MapPatrolling(props) {
     setRemoveImage(param);
   }
 
+  //Botones a usar, si se inicio o no la navegacion
+  const [sNav, setSNav] = useState(0);
+
+  function sNavi(param){
+    setSNav(param);
+  }
+
+  //Boton a usar, si se inicio o no posición inicial
+  const [pIni, setPIni] = useState(0);
+
+  function pInic(param){
+    setPIni(param);
+  }
 
 
   // Hook to be executed after the DOM is rendered
@@ -215,6 +236,7 @@ export default function MapPatrolling(props) {
         });
 
 
+        let contPI = 0;
 
         viewer.scene.addEventListener('stagemouseup', function(event) {
           
@@ -235,42 +257,66 @@ export default function MapPatrolling(props) {
 
               polygon.addPoint(pos);
              
+              //Si se activa la opción de posición inicial, no se vea reflejado en el arreglo de coordenadas
+              if(estadoPIni === 0){
 
-              // -------- Para dejar de recibir coordenadas si se presiono Done -----
 
-                if(addCoord === 0){  //Si es diferente de cero, se presiono BTN Done
+                  // -------- Para dejar de recibir coordenadas si se presiono Done -----
 
-                  console.log("coord:"+coord.length);
+                    if(addCoord === 0){  //Si es diferente de cero, se presiono BTN Done
 
-                  if(coord.length === 0){ //Si se le dio BTN Clear las coordenadas vuelven a numerar desde la posicion inicial (0)
+                      console.log("coord:"+coord.length);
 
-                    num = 0;
-                  }
+                      if(coord.length === 0){ //Si se le dio BTN Clear las coordenadas vuelven a numerar desde la posicion inicial (0)
 
-                  coord.push(pos);
+                        num = 0;
+                      }
 
-                  //----- Poner los numero segun el orden de las coordenadas en la scene 
-    
-                  var numer = "n"+num+".png";
-                  //console.log(numer);
-      
-                  // Agregarle a cada coordenada su respectiva numeración
-                  numIcon[num] = new window.ROS2D.NavigationImage({
-                    size: 0.30,
-                    image: "images/numbers/"+numer
-                  });
-                    numIcon[num].x = posx;
-                    numIcon[num].y = posy;
-                    viewer.scene.addChild(numIcon[num]); //Agrega cada numeración a la scene
-      
-                    //console.log(num);
-                  num++;
-      
-                  //-------------------
+                      coord.push(pos);
 
+                      //----- Poner los numero segun el orden de las coordenadas en la scene 
+        
+                      var numer = "n"+num+".png";
+                      //console.log(numer);
+          
+                      // Agregarle a cada coordenada su respectiva numeración
+                      numIcon[num] = new window.ROS2D.NavigationImage({
+                        size: 0.30,
+                        image: "images/numbers/"+numer
+                      });
+                        numIcon[num].x = posx;
+                        numIcon[num].y = posy;
+                        viewer.scene.addChild(numIcon[num]); //Agrega cada numeración a la scene
+          
+                        //console.log(num);
+                      num++;
+          
+                      //-------------------
+
+                    }
+                    
                 }
-                
-              
+                else{
+
+                      if(contPI > 0){
+
+                        delete numIconPI.image; // Elimina la imagen de la posicion inicial de la scene 
+
+                        //console.log("elimino");
+                      }
+                      contPI++;
+
+                      // Agregar imagen de posición inicial
+                      numIconPI = new window.ROS2D.NavigationImage({
+                        size: 0.30,
+                        image: "images/pos_ini/pos_ini.png"
+                      });
+                        numIconPI.x = posx;
+                        numIconPI.y = posy;
+                        viewer.scene.addChild(numIconPI); //Agrega la posicion inicial de forma grafica en la scene
+
+                        
+                }
               // ----------    
 
             }
@@ -546,14 +592,14 @@ export default function MapPatrolling(props) {
         // Calling stop_navigation service --> Robot
         let stopNavigationClient = new window.ROSLIB.Service({
           ros : props.rosConnection,
-          name : 'vva_navigation_intent/stop_navigation',
+          name : 'vva_navigation_intent/stop_moving',
           serviceType : 'vva_msgs/VVAVoiceCommandIntent'
         });
 
         let request = new window.ROSLIB.ServiceRequest({});
       
         stopNavigationClient.callService(request, function(result) {
-          console.log('Result for the stop_navigation service call: ' + result);
+          console.log('Result for the stop_moving service call: ' + result);
         });
 
         // Calling stop_navigation service --> Stack
@@ -576,6 +622,68 @@ export default function MapPatrolling(props) {
 
   }
 
+  let poseIni;
+  let headerPI;
+
+  let arregloPI = new Array(36);
+
+  //Generar la posición inicial, para darle ubicación al robot
+  function positionIni(){
+
+    //let JS_timestamp = Date().getTime();
+
+    console.log(pos);
+
+    let arregloPI2 = arregloPI.fill(0);
+
+    arregloPI2[0] = 0.25;
+    arregloPI2[7] = 0.25;
+    arregloPI2[35] = 0.06853892326654787;
+
+    console.log(arregloPI2);
+
+    poseIni = { pose : {position: pos,
+      orientation: {x: 0, y: 0,z: 0, w: 0}
+    },
+            covariance: arregloPI2 
+            
+    }
+
+    headerPI = { frame_id: "map"//,
+                 //stamp: JS_timestamp
+
+    }
+
+      // Publishing a Topic
+      // ------------------
+
+      var initialPose = new window.ROSLIB.Topic({
+        ros : props.rosConnection,
+        name : '/initialpose',
+        messageType : 'geometry_msgs/PoseWithCovarianceStamped'
+      });
+
+      var PoseWithCovarianceStamped = new window.ROSLIB.Message({
+      header : headerPI,
+      pose : poseIni
+      });
+
+      console.log("Publishing initialPose");
+      initialPose.publish(PoseWithCovarianceStamped);
+
+  }
+
+  /*
+  function timeRos = time.time(){
+
+    float_secs = time.time(){}
+    secs = int(float_secs)
+    nsecs = int((float_secs - secs) * 1000000000)
+    return Time(secs, nsecs)
+
+
+  }
+*/
 
 
 //************* */
@@ -607,6 +715,11 @@ export default function MapPatrolling(props) {
       top: "620px",
       left: "340px",
       width: "100px"
+    },addInitialPosition: {
+      position: "absolute",
+      top: "620px",
+      left: "340px",
+      width: "100px"
     },startNavigationBTN: {
       position: "absolute",
       top: "520px",
@@ -614,12 +727,12 @@ export default function MapPatrolling(props) {
       width: "100px"
     },removePointsBTN: {
       position: "absolute",
-      top: "620px",
-      left: "230px",
+      top: "520px",
+      left: "340px",
       width: "100px"
     },pauseNavigationBTN: {
       position: "absolute",
-      top: "520px",
+      top: "570px",
       left: "230px",
       width: "100px"
     }
@@ -681,6 +794,11 @@ export default function MapPatrolling(props) {
       top: "100px",
       left: "240px",
       width: "50px"
+    },addInitialPosition: {
+      position: "absolute",
+      top: "100px",
+      left: "240px",
+      width: "50px"
     },
     startNavigationBTN: {
       position: "absolute",
@@ -735,59 +853,117 @@ export default function MapPatrolling(props) {
 
     </TransformWrapper>
 
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.donePoint}}
-                  onClick={() => {
+              <div>
+                {sNav === 0?
 
-                    addCoord = 2; // Para dejar de recibir coordenadas dentro del arreglo
-                    tourMapPoint();
-                  }}
-                  >
-                  Done 
-                </Button>
+                  <div>
+                    <Button size="large" variant="contained" color="primary"
+                      classes={{label: classes.label, root: classes.startNavigationBTN}}
+                      onClick={() => {
 
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.stopNavigationBTN}}
-                  onClick={() => {
-        
-                    stopNavigation();
-                  }}
-                  >
-                  Stop
-                </Button>
+                        sNavi(2); //Cambia de estado mostrando los otros botones, mientras navegacion esta activa
+                        startNavigation();
+                      }}
+                      >
+                      Start_Nav
+                    </Button>
 
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.startNavigationBTN}}
-                  onClick={() => {
+                  </div>
 
-                    startNavigation();
-                  }}
-                  >
-                  Start
-                </Button>
+                      :
 
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.removePointsBTN}}
-                  onClick={() => {
-                    
-                    removeIm(2);
-                  }}
-                  >
-                  Clear
-                </Button>
+                  <div>
+                      <Button size="large" variant="contained" color="primary"
+                        classes={{label: classes.label, root: classes.donePoint}}
+                        onClick={() => {
 
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.pauseNavigationBTN}}
-                  onClick={() => {
-                    
-                    pauseNavigation();
-                    
-                  }}
-                  >
-                  Pause
-                </Button>
+                          addCoord = 2; // Para dejar de recibir coordenadas dentro del arreglo
+                          tourMapPoint();
+                        }}
+                        >
+                        Done 
+                      </Button>
+
+                      <Button size="large" variant="contained" color="primary"
+                        classes={{label: classes.label, root: classes.stopNavigationBTN}}
+                        onClick={() => {
+                          
+                          sNavi(0); // Cambia el estado sin navegacion
+                          stopNavigation();
+                        }}
+                        >
+                        Stop_Nav
+                      </Button>
+
+                      
+
+                      <Button size="large" variant="contained" color="primary"
+                        classes={{label: classes.label, root: classes.removePointsBTN}}
+                        onClick={() => {
+                          
+                          removeIm(2);
+                        }}
+                        >
+                        Clear
+                      </Button>
+
+                      <Button size="large" variant="contained" color="primary"
+                        classes={{label: classes.label, root: classes.pauseNavigationBTN}}
+                        onClick={() => {
+                          
+                          pauseNavigation();
+                          
+                        }}
+                        >
+                        Pause_Nav
+                      </Button>
+
+                        <div>
+                         {pIni === 0?
+                          <div>
+                              <Button size="large" variant="contained" color="primary"
+                                classes={{label: classes.label, root: classes.initialPosition}}
+                                onClick={() => {
+
+                                  
+                                  //Posicion inicial
+                                  estadoPIni = 2;
+                                  pInic(2);
 
 
+                                }}
+                                >
+                                Position_Ini
+                              </Button>
+                          </div>
+                          :
+                          <div>
+                              <Button size="large" variant="contained" color="primary"
+                                classes={{label: classes.label, root: classes.addInitialPosition}}
+                                onClick={() => {
+
+                                  
+                                  //Posicion inicial
+                                  positionIni();
+                                  estadoPIni = 0;
+                                  pInic(0);
+
+
+                                }}
+                                >
+                                Add_Position
+                              </Button>
+                          </div>
+                        }
+
+                      </div>
+
+                  </div>
+                
+
+               }
+
+             </div>
 
     </div>
     
