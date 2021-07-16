@@ -20,18 +20,7 @@ export default function ControlButtons(props) {
     props.handler(c);
     
   }
-
-  /*
-  //Cambiar el estado de Map_patrolling para dar por finalizado los puntos seleccionados
-  function donePoints() {
-    props.handlerp(2);
-    
-  }
-  */
-  
-
-
-  
+ 
 
   // Hook to update the DOM each time the map file size is received
   let [mapSizeMB, setMapSizeMB] = useState(0);

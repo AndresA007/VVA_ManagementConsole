@@ -17,7 +17,7 @@ let poseFramed2 = [];
 
 var cont = 0;
 
-   // ----------
+   // ---------- Permitiendo marcar los objetivos si fue activado el BTN Goals
 
 let estadoGoals = 0;
 
@@ -35,6 +35,8 @@ let estadoPIni = 0;
 let numIconPI;
 
 //****** */
+
+let VVA_RM_IDLE = 0;
 
 export default function MapPatrolling(props) { 
   
@@ -66,6 +68,8 @@ export default function MapPatrolling(props) {
     setSGoal(param);
   }
 
+  // Hook to update the DOM 
+  let [vvaRMStatusHook, setVvaRMStatusHook] = useState(VVA_RM_IDLE);
 
   // Hook to be executed after the DOM is rendered
   useEffect(() => {
@@ -343,7 +347,6 @@ export default function MapPatrolling(props) {
         if(removeImage === 2){
 
               let contC = 0;
-              
 
               while(contC <= coord.length - 1){
 
@@ -498,6 +501,18 @@ export default function MapPatrolling(props) {
     //*********** */
 
 
+    // setup a listener for the ROS status topic                      /********** */
+    let vvaRMStatusListener = new window.ROSLIB.Topic({
+      ros : props.rosConnection,
+      name : '/vva_robot_management/status',
+      messageType : 'std_msgs/UInt8',
+      throttle_rate : 1000,
+      reconnect_on_close: false
+    });
+    vvaRMStatusListener.subscribe(function(rmStatus) {
+      // Set the status and re-render the DOM
+      setVvaRMStatusHook(rmStatus.data);
+    });
 
 
 
@@ -581,6 +596,20 @@ export default function MapPatrolling(props) {
 
   function stopNavigation(){
 
+    // Calling stop_navigation service --> Robot
+    let stopMovingClient = new window.ROSLIB.Service({
+      ros : props.rosConnection,
+      name : 'vva_navigation_intent/stop_moving',
+      serviceType : 'vva_msgs/VVAVoiceCommandIntent'
+    });
+
+    let request = new window.ROSLIB.ServiceRequest({});
+  
+    stopMovingClient.callService(request, function(result) {
+      console.log('Result for the stop_moving service call: ' + result);
+    });
+
+
     // Calling stop_navigation service
     let stopNavigationClient = new window.ROSLIB.Service({
       ros : props.rosConnection,
@@ -612,19 +641,6 @@ export default function MapPatrolling(props) {
       
         stopNavigationClient.callService(request, function(result) {
           console.log('Result for the stop_moving service call: ' + result);
-        });
-
-        // Calling stop_navigation service --> Stack
-        let stopNavigationStackClient = new window.ROSLIB.Service({
-          ros : props.rosConnection,
-          name : '/vva_robot_management/stop_navigation',
-          serviceType : 'std_srvs/Empty'
-        });
-
-        let request2 = new window.ROSLIB.ServiceRequest({});
-      
-        stopNavigationStackClient.callService(request2, function(result) {
-          console.log('Result for the stop_navigation Stack service call: ' + result);
         });
 
         opcionPause = 1;
@@ -928,7 +944,7 @@ const classes = useStyles();
     </TransformWrapper>
 
               <div>
-                {sNav === 0?
+                {sNav === 0 && vvaRMStatusHook === 0?
 
                   <div>
                     <Button size="large" variant="contained" color="primary"
@@ -945,128 +961,137 @@ const classes = useStyles();
                   </div>
 
                       :
-
-                  <div>
-
-                        <div>
-
-                              {sGoal === 0?
-                                    <div>
-                                        <Button size="large" variant="contained" color="primary"
-                                        classes={{label: classes.label, root: classes.donePoint}}
-                                        onClick={() => {
-
-                                          estadoGoals = 2;
-                                          sGoals(2); //Despues de recibir este valor, permite marcar en escene los Goals
-                                          
-                                        }}
-                                        >
-                                        Goals 
-                                        </Button>
-                                    </div>
-                                :
-                                    <div>
-                                        <Button size="large" variant="contained" color="primary"
-                                        classes={{label: classes.label, root: classes.donePoint2}}
-                                        onClick={() => {
-
-                                          estadoGoals = 0;
-                                          addCoord = 2; // Para dejar de recibir coordenadas dentro del arreglo
-                                          sGoals(0); //Despues de recibir este valor, no permite marcar en escene los Goals
-                                          tourMapPoint();
-                                          
-                                        }}
-                                        >
-                                        Done 
-                                        </Button>
-                                        </div>
-
-
-                              }
-
-
-                        </div>
-
-
-                      <Button size="large" variant="contained" color="primary"
-                        classes={{label: classes.label, root: classes.stopNavigationBTN}}
-                        onClick={() => {
-                          
-                          sNavi(0); // Cambia el estado sin navegacion
-                          stopNavigation();
-                        }}
-                        >
-                        Stop_Nav
-                      </Button>
-
-                      
-
-                      <Button size="large" variant="contained" color="primary"
-                        classes={{label: classes.label, root: classes.removePointsBTN}}
-                        onClick={() => {
-                                                  //Tambien se podria colocar que despues de
-                                                  //darle BTN done, el BTN Goals desaparezca
-                                                  // y dandole aqui en el BTN clear, vuelva 
-                                                  // a aparecer el BTN Goals 
-                          removeIm(2);
-                        }}
-                        >
-                        Clear
-                      </Button>
-
-                      <Button size="large" variant="contained" color="primary"
-                        classes={{label: classes.label, root: classes.pauseNavigationBTN}}
-                        onClick={() => {
-                          
-                          pauseNavigation();
-                          
-                        }}
-                        >
-                        Pause_Nav
-                      </Button>
-
-                        <div>
-                         {pIni === 0?
+                  <div>     
+                      {vvaRMStatusHook === 2?
                           <div>
+
+                                <div>
+
+                                      {sGoal === 0?
+                                            <div>
+                                                <Button size="large" variant="contained" color="primary"
+                                                classes={{label: classes.label, root: classes.donePoint}}
+                                                onClick={() => {
+
+                                                  estadoGoals = 2;
+                                                  sGoals(2); //Despues de recibir este valor, permite marcar en escene los Goals
+                                                  
+                                                }}
+                                                >
+                                                Goals 
+                                                </Button>
+                                            </div>
+                                        :
+                                            <div>
+                                                <Button size="large" variant="contained" color="primary"
+                                                classes={{label: classes.label, root: classes.donePoint2}}
+                                                onClick={() => {
+
+                                                  estadoGoals = 0;
+                                                  addCoord = 2; // Para dejar de recibir coordenadas dentro del arreglo
+                                                  sGoals(0); //Despues de recibir este valor, no permite marcar en escene los Goals
+                                                  tourMapPoint();
+                                                  
+                                                }}
+                                                >
+                                                Done 
+                                                </Button>
+                                                </div>
+
+
+                                      }
+
+
+                                </div>
+
+
                               <Button size="large" variant="contained" color="primary"
-                                classes={{label: classes.label, root: classes.initialPosition}}
+                                classes={{label: classes.label, root: classes.stopNavigationBTN}}
                                 onClick={() => {
-
                                   
-                                  //Posicion inicial
-                                  estadoPIni = 2;
-                                  pInic(2);
-
-
+                                  sNavi(0); // Cambia el estado sin navegacion
+                                  stopNavigation();
                                 }}
                                 >
-                                Ini_Pos
+                                Stop_Nav
                               </Button>
+
+                              
+
+                              <Button size="large" variant="contained" color="primary"
+                                classes={{label: classes.label, root: classes.removePointsBTN}}
+                                onClick={() => {
+                                                          //Tambien se podria colocar que despues de
+                                                          //darle BTN done, el BTN Goals desaparezca
+                                                          // y dandole aqui en el BTN clear, vuelva 
+                                                          // a aparecer el BTN Goals 
+                                  removeIm(2);
+                                }}
+                                >
+                                Clear
+                              </Button>
+
+                              <Button size="large" variant="contained" color="primary"
+                                classes={{label: classes.label, root: classes.pauseNavigationBTN}}
+                                onClick={() => {
+                                  
+                                  pauseNavigation();
+                                  
+                                }}
+                                >
+                                Pause_Nav
+                              </Button>
+
+                                <div>
+                                {pIni === 0?
+                                  <div>
+                                      <Button size="large" variant="contained" color="primary"
+                                        classes={{label: classes.label, root: classes.initialPosition}}
+                                        onClick={() => {
+
+                                          
+                                          //Posicion inicial
+                                          estadoPIni = 2;
+                                          pInic(2);
+
+
+                                        }}
+                                        >
+                                        Ini_Pos
+                                      </Button>
+                                  </div>
+                                  :
+                                  <div>
+                                      <Button size="large" variant="contained" color="primary"
+                                        classes={{label: classes.label, root: classes.addInitialPosition}}
+                                        onClick={() => {
+
+                                          
+                                          //Posicion inicial
+                                          positionIni();
+                                          estadoPIni = 0;
+                                          pInic(0);
+
+
+                                        }}
+                                        >
+                                        Add_Pos
+                                      </Button>
+                                  </div>
+                                }
+
+                              </div>
+
                           </div>
                           :
                           <div>
-                              <Button size="large" variant="contained" color="primary"
-                                classes={{label: classes.label, root: classes.addInitialPosition}}
-                                onClick={() => {
-
-                                  
-                                  //Posicion inicial
-                                  positionIni();
-                                  estadoPIni = 0;
-                                  pInic(0);
 
 
-                                }}
-                                >
-                                Add_Pos
-                              </Button>
                           </div>
-                        }
 
-                      </div>
 
-                  </div>
-                
+                      }
+                    </div>
 
                }
 
