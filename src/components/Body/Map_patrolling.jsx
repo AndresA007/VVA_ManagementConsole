@@ -3,7 +3,6 @@ import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import { makeStyles, Button } from "@material-ui/core";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-//import time from time;
 
 //****** Variables a utilizar para las coordenadas */
 let coord = [];
@@ -33,6 +32,10 @@ let numIcon = [];
 let estadoPIni = 0;
 
 let numIconPI;
+
+let numIconPIF;
+
+let posPI;
 
 //****** */
 
@@ -67,6 +70,8 @@ export default function MapPatrolling(props) {
   function sGoals(param){
     setSGoal(param);
   }
+
+  
 
   // Hook to update the DOM 
   let [vvaRMStatusHook, setVvaRMStatusHook] = useState(VVA_RM_IDLE);
@@ -253,6 +258,7 @@ export default function MapPatrolling(props) {
 
 
         let contPI = 0;
+        let contPIfase = 0;
 
         viewer.scene.addEventListener('stagemouseup', function(event) {
           
@@ -269,7 +275,7 @@ export default function MapPatrolling(props) {
               //console.log(posx);
               //console.log(posy);
 
-              //console.log(pos); 
+              console.log(pos); 
 
               polygon.addPoint(pos);
              
@@ -314,24 +320,45 @@ export default function MapPatrolling(props) {
                 }
                 else{
 
-                      if(contPI > 0){
+                     if(contPIfase === 0){
 
-                        delete numIconPI.image; // Elimina la imagen de la posicion inicial de la scene 
+                            if(contPI > 0){
 
-                        //console.log("elimino");
-                      }
-                      contPI++;
+                              delete numIconPI.image; // Elimina la imagen de la posicion inicial de la scene 
 
-                      // Agregar imagen de posición inicial
-                      numIconPI = new window.ROS2D.NavigationImage({
-                        size: 0.30,
-                        image: "images/pos_ini/pos_ini.png"
-                      });
-                        numIconPI.x = posx;
-                        numIconPI.y = posy;
-                        viewer.scene.addChild(numIconPI); //Agrega la posicion inicial de forma grafica en la scene
+                              delete numIconPIF.image; //Elimina la imagen de la orientación de la posición inicial en scene
 
-                        
+                              //console.log("elimino");
+                            }
+                            contPI++;
+
+
+                            // Agregar imagen de posición inicial
+                            numIconPI = new window.ROS2D.NavigationImage({
+                              size: 0.30,
+                              image: "images/pos_ini/pos_ini.png"
+                            });
+                              numIconPI.x = posx;
+                              numIconPI.y = posy;
+                              viewer.scene.addChild(numIconPI); //Agrega la posicion inicial de forma grafica en la scene
+
+                            posPI = pos; //Para que tome solo la coordenada de la posición y no de la orientación
+
+                            contPIfase = 2;
+
+                       }else{
+
+                            // Agregar imagen de la orientación posición inicial
+                            numIconPIF = new window.ROS2D.NavigationImage({
+                              size: 0.30,
+                              image: "images/pos_ini/orientacion.png"
+                            });
+                              numIconPIF.x = posx;
+                              numIconPIF.y = posy;
+                              viewer.scene.addChild(numIconPIF); //Agrega la orientacion de la posicion inicial de forma grafica en la scene
+
+                            contPIfase = 0;
+                       }
                 }
               // ----------    
 
@@ -376,6 +403,62 @@ export default function MapPatrolling(props) {
         }
         // ------------------
         
+        // ------------------
+
+        /*
+        let poseIni;
+        let headerPI;
+
+        let arregloPI = new Array(36); //Crea un arreglo de 36 posiciones
+
+        //Generar la posición inicial, para darle ubicación al robot
+        if(sPI === 2){
+
+
+              let arregloPI2 = arregloPI.fill(0); //llena el arreglo de ceros
+
+              arregloPI2[0] = 0.25;
+              arregloPI2[7] = 0.25;
+              arregloPI2[35] = 0.06853892326654787;
+
+              console.log("posss:"+coord);
+
+              poseIni = { pose : {position: pos,
+                orientation: {x: 0, y: 0,z: 0, w: 0}
+              },
+                      covariance: arregloPI2 
+                      
+              }
+
+              headerPI = { frame_id: "map"//,
+                          //stamp: JS_timestamp
+
+              }
+
+              console.log("pose:"+poseIni);
+
+                // Publishing a Topic   ---> Para dar una posicion de referencia o inicial
+                // ------------------
+
+                var initialPose = new window.ROSLIB.Topic({
+                  ros : props.rosConnection,
+                  name : '/initialpose',
+                  messageType : 'geometry_msgs/PoseWithCovarianceStamped'
+                });
+
+                var PoseWithCovarianceStamped = new window.ROSLIB.Message({
+                header : headerPI,
+                pose : poseIni
+                });
+
+                console.log("Publishing initialPose");
+                initialPose.publish(PoseWithCovarianceStamped);
+
+                sPIni(0);
+
+        }
+*/
+        // ------------------
         
 
     
@@ -650,15 +733,34 @@ export default function MapPatrolling(props) {
 
   }
 
+  
+  let posPIx;
+  let posPIy;
+  let posPIx2;
+  let posPIy2;
+  let anguloPI;
+
   let poseIni;
   let headerPI;
 
   let arregloPI = new Array(36); //Crea un arreglo de 36 posiciones
 
+  //let quaternion = [];
+
   //Generar la posición inicial, para darle ubicación al robot
   function positionIni(){
 
-    //console.log(pos);
+    console.log(pos);
+    console.log(posPI);
+
+    posPIx = posPI.x;
+    posPIy = posPI.y;
+    posPIx2 = pos.x;
+    posPIy2 = pos.y;
+   
+    anguloPI = angulosPI(posPIx,posPIy,posPIx2,posPIy2);
+
+    console.log(anguloPI);
 
     let arregloPI2 = arregloPI.fill(0); //llena el arreglo de ceros
 
@@ -666,19 +768,85 @@ export default function MapPatrolling(props) {
     arregloPI2[7] = 0.25;
     arregloPI2[35] = 0.06853892326654787;
 
-    console.log(arregloPI2);
+    /*
+ 
+    let ai = posPIx/2;
+    let aj = posPIy/2;
+    let ak = 0;
+  
+    let ai = posPIx2;
+    let aj = posPIy2;
+    let ak = 0;
+   
+    let ci = Math.cos(ai);
+    let si = Math.sin(ai);
+    let cj = Math.cos(aj);
+    let sj = Math.sin(aj);
+    let ck = Math.cos(ak);
+    let sk = Math.sin(ak);
+    let cc = ci*ck;
+    let cs = ci*sk;
+    let sc = si*ck;
+    let ss = si*sk;
 
-    poseIni = { pose : {position: pos,
-      orientation: {x: 0, y: 0,z: 0, w: 0}
-    },
+    quaternion[0] = cj*(cs + sc)
+    quaternion[1] = sj*(cc + ss)
+    quaternion[2] = sj*(cs - sc)
+    quaternion[3] = cj*(cc - ss)
+     */
+
+    /* ACOMODAR ORIENTACION SEGUN EL CUADRANTE  */
+    
+    console.log("angulo");
+    console.log(anguloPI);
+
+
+    let zo = -(Math.sin(anguloPI/2));  //Funciono colocandole estos signos negativos lo de la orientación
+    let wo = -(Math.cos(anguloPI/2));
+    
+    console.log(zo);
+    console.log(wo);
+
+
+
+
+    
+    
+    // ------
+
+    //console.log(arregloPI2);
+
+    var currentTime = new Date();
+    var secs = Math.floor(currentTime.getTime()/1000);
+    var nsecs = Math.round(1000000000*(currentTime.getTime()/1000-secs));
+
+    //console.log(secs);
+    //console.log(nsecs);
+
+    poseIni = { pose : {position: posPI,
+      //orientation: {x: 0, y: 0,z: 1, w: anguloPI} //Necesita orientacion para que no de null
+      //orientation: {x: quaternion[0], y: quaternion[1],z: quaternion[2], w: anguloPI}
+      //orientation: {x: posPIx, y: posPIy,z: 0, w: anguloPI} 
+      //orientation: {x: 0, y: 0,z: 0, w: 1.35}
+      //orientation: {x: 0, y: 0, z: zo, w: wo}
+      orientation: {x: 0, y: 0, z: zo, w: wo}
+    },         //0.5,0.5,0.2
             covariance: arregloPI2 
             
     }
 
-    headerPI = { frame_id: "map"//,
+    headerPI = { 
+                  seq: 4732,   //Probar sin este valor
+                  stamp: {
+                         secs: secs,
+                         nsecs: nsecs
+                  },
+                  frame_id: "map"//,
                  //stamp: JS_timestamp
 
     }
+
+    console.log(headerPI);
 
       // Publishing a Topic   ---> Para dar una posicion de referencia o inicial
       // ------------------
@@ -699,18 +867,36 @@ export default function MapPatrolling(props) {
 
   }
 
-  /*
-  function timeRos = time.time(){
+  function angulosPI(x1, y1, x2, y2){
 
-    float_secs = time.time(){}
-    secs = int(float_secs)
-    nsecs = int((float_secs - secs) * 1000000000)
-    return Time(secs, nsecs)
+    //y1 = 0;
+    //x1 = 0;
 
+      return (((Math.atan2(y2 - y1, x2 -x1)*180/Math.PI))*(Math.PI/180));
 
   }
-*/
+  
 
+  /*
+  let float_secs;
+  let secs;
+  let nsecs;
+  
+
+  
+  let timeRos = time.time(){
+
+    float_secs = time.time();  //{}
+    secs = int(float_secs);
+    nsecs = int((float_secs - secs) * 1000000000);
+    return Time(secs, nsecs);
+
+  }
+
+  //Arreglar la posicion inicial, la flecha con la orientacion
+
+
+*/
 
 //************* */
 
@@ -1054,7 +1240,6 @@ const classes = useStyles();
                                           estadoPIni = 2;
                                           pInic(2);
 
-
                                         }}
                                         >
                                         Ini_Pos
@@ -1071,8 +1256,7 @@ const classes = useStyles();
                                           positionIni();
                                           estadoPIni = 0;
                                           pInic(0);
-
-
+                                          
                                         }}
                                         >
                                         Add_Pos

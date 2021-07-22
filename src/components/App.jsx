@@ -7,9 +7,16 @@ import Header from "./Header/Header";
  */
 export default function App() {
 
-    // ROS connection address
+  
   const rosbridgeServerAddress = "ws://192.168.20.34:9090";
   const videoServerAddress     =      "192.168.20.34";
+  
+
+  /*
+    // ROS connection address ROBOT 
+  const rosbridgeServerAddress = "ws://10.94.68.2:9090";
+  const videoServerAddress     =      "10.94.68.2";
+  */
 
   /*
   const rosbridgeServerAddress = "ws://127.0.0.1:9090";
