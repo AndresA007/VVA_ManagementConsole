@@ -1130,8 +1130,8 @@ const classes = useStyles();
     </TransformWrapper>
 
               <div>
-                {sNav === 0 && vvaRMStatusHook === 0?
-
+                {sNav === 0 && vvaRMStatusHook === 3?
+                    /* vvaRMStatusHook === 0?*/
                   <div>
                     <Button size="large" variant="contained" color="primary"
                       classes={{label: classes.label, root: classes.startNavigationBTN}}
@@ -1149,6 +1149,7 @@ const classes = useStyles();
                       :
                   <div>     
                       {vvaRMStatusHook === 2?
+                        /* vvaRMStatusHook === 2?*/
                           <div>
 
                                 <div>
@@ -1160,6 +1161,7 @@ const classes = useStyles();
                                                 onClick={() => {
 
                                                   estadoGoals = 2;
+                                                  removeIm(2);
                                                   sGoals(2); //Despues de recibir este valor, permite marcar en escene los Goals
                                                   
                                                 }}

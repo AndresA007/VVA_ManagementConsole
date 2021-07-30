@@ -142,7 +142,10 @@ export default function ControlButtons(props) {
   return (
 
     
-      
+      <div>
+        {vvaRMStatusHook < 2 ?
+
+        /*vvaRMStatusHook !== 2 ? */
 
         <div>
           {stateBTN === 0 ?
@@ -253,7 +256,18 @@ export default function ControlButtons(props) {
 
             }
         </div>
-       
+
+        :
+
+        <div>
+
+        </div>
+
+
+        }
+
+      </div>
+
   );
 }
     

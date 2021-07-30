@@ -11,6 +11,8 @@ import { Button } from "@material-ui/core";
   //console.log(variable);
 
 
+let VVA_RM_IDLE = 0;  
+
 export default function Body(props) {
 
   const [state, setState] = useState(0);
@@ -34,7 +36,27 @@ export default function Body(props) {
   // Hooks for responsiveness
   const [currentWindowSizeCat, setCurrentWindowSizeCat] = useState("");
 
+  // Hook to update the DOM 
+  let [vvaRMStatusHook, setVvaRMStatusHook] = useState(VVA_RM_IDLE);
+
   useEffect(() => {
+
+     //*********** */
+
+    // setup a listener for the ROS status topic                      
+    let vvaRMStatusListener = new window.ROSLIB.Topic({
+      ros : props.rosConnection,
+      name : '/vva_robot_management/status',
+      messageType : 'std_msgs/UInt8',
+      throttle_rate : 1000,
+      reconnect_on_close: false
+    });
+    vvaRMStatusListener.subscribe(function(rmStatus) {
+      // Set the status and re-render the DOM
+      setVvaRMStatusHook(rmStatus.data);
+    });
+
+     //*********** */
 
     function updateDimensions() {
       const windowSizeCat = RSP.getWindowCategory(window.innerWidth);
@@ -48,6 +70,8 @@ export default function Body(props) {
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
 
+    
+    
 
   }, [currentWindowSizeCat]);
 
@@ -127,9 +151,9 @@ export default function Body(props) {
       
        <div>
 
-        <div>
-          {state === 0 ?
-              
+        <div>  
+          {state === 0 && vvaRMStatusHook < 1 ?
+              /* vvaRMStatusHook !== 2 && vvaRMStatusHook !== 1*/
             <div>
               <Map rosConnection={props.rosConnection} isMobile={isMobile} />
               
