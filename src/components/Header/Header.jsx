@@ -3,6 +3,7 @@ import MenuMobile from "./MenuMobile";
 import RSP from "../../responsive"
 import { AppBar, Toolbar, Button, makeStyles } from "@material-ui/core";
 
+import { LogoutButton } from "./logout"; 
 
 export default function Header(props) {
 
@@ -89,6 +90,10 @@ export default function Header(props) {
         color: "#a4ebf3",
         margin: "13px 24px",
         position: "absolute"
+      },
+      exit: {
+        position: "relative",
+        right: "-20px"
       }
     }
   }
@@ -112,9 +117,12 @@ export default function Header(props) {
             <Button color="inherit" classes={{root: classes.navButtons}}>Events</Button>
             <Button color="inherit" classes={{root: classes.navButtons}}>Maps</Button>
             <Button color="inherit" classes={{root: classes.navButtons}}>Patrolling</Button>
+            
           </div>
+          <LogoutButton classes={{root: classes.exit}} />
         </Toolbar>
       </AppBar>
+
       <div style={styles.desktop.title}>{props.title}</div>
       <div style={styles.desktop.subtitle}>{props.subtitle}</div>
     </div>

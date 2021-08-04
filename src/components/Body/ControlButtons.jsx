@@ -3,7 +3,6 @@ import React, { useEffect, useState} from "react";
 import { makeStyles, Button } from "@material-ui/core";
 
 
-
 // Constants to interpret the status topic from the ROS node vva_robot_management
 const VVA_RM_IDLE     = 0;
 //const VVA_RM_MAPPING  = 1
@@ -140,7 +139,6 @@ export default function ControlButtons(props) {
   
 
   return (
-
     
       <div>
         {vvaRMStatusHook < 2 ?
@@ -266,7 +264,10 @@ export default function ControlButtons(props) {
 
         }
 
+
       </div>
+
+      
 
   );
 }
