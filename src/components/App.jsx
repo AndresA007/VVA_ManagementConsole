@@ -1,16 +1,28 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Body from "./Body/Body";
 import Header from "./Header/Header";
+
+import { makeStyles, Button } from "@material-ui/core";
+
+import  LoginControl  from "./LoginC/Login";
+
 
 /**
  * Component function
  */
 export default function App() {
 
-  /*
-  const rosbridgeServerAddress = "ws://192.168.20.34:9090";
-  const videoServerAddress     =      "192.168.20.34";
-  */
+  const [state, setState] = useState(0);
+
+   function handler(param) {
+     console.log("cambio"+param);
+    setState(param);
+    }
+
+  
+  //const rosbridgeServerAddress = "ws://192.168.39.146:9090";
+  //const videoServerAddress     =      "192.168.39.146";
+  
 
   /*
     // ROS connection address ROBOT 
@@ -29,6 +41,7 @@ export default function App() {
   });
 
   return (
+    /*
     <div>
       <Header
         title="Map construction"
@@ -40,5 +53,29 @@ export default function App() {
       />
 
     </div>
+    */
+   <div>
+     {state === 0?
+        <div>
+        <LoginControl handler={handler}/>
+        </div>
+        :
+        <div>
+          <div>
+            <Header
+              title="Map construction"
+              subtitle="Current robot: ROBOT 1"
+            />
+            <Body
+              rosConnection={ros}
+              videoServer={videoServerAddress}
+            />
+
+          </div>
+
+        </div>
+        
+     }
+   </div>
   );
 }
