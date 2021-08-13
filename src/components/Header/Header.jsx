@@ -6,6 +6,7 @@ import { AppBar, Toolbar, Button, makeStyles } from "@material-ui/core";
 
 export default function Header(props) {
 
+
   // Hooks for responsiveness
   const [currentWindowSizeCat, setCurrentWindowSizeCat] = useState("");
 
@@ -89,6 +90,10 @@ export default function Header(props) {
         color: "#a4ebf3",
         margin: "13px 24px",
         position: "absolute"
+      },
+      exit: {
+        position: "relative",
+        right: "-20px"
       }
     }
   }
@@ -113,6 +118,7 @@ export default function Header(props) {
             <Button color="inherit" classes={{root: classes.navButtons}}>Maps</Button>
             <Button color="inherit" classes={{root: classes.navButtons}}>Patrolling</Button>
           </div>
+          
         </Toolbar>
       </AppBar>
       <div style={styles.desktop.title}>{props.title}</div>
