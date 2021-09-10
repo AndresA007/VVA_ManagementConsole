@@ -152,32 +152,66 @@ export default function ControlButtons(props) {
 
             <div>
               {vvaRMStatusHook === VVA_RM_IDLE ?
-                <Button size="large" variant="contained" color="primary"
-                  classes={{label: classes.label, root: classes.done}}
-                  onClick={() => {
-                    if (props.connected) {
-                      // Calling start_mapping service
-                      let startMappingClient = new window.ROSLIB.Service({
-                        ros : props.rosConnection,
-                        name : '/vva_robot_management/start_mapping',
-                        serviceType : 'std_srvs/Empty'
-                      });
+              <div>
+                    <Button size="large" variant="contained" color="primary"
+                      classes={{label: classes.label, root: classes.done}}
+                      onClick={() => {
+                        if (props.connected) {
+                          // Calling start_mapping service
+                          let startMappingClient = new window.ROSLIB.Service({
+                            ros : props.rosConnection,
+                            name : '/vva_robot_management/start_mapping',
+                            serviceType : 'std_srvs/Empty'
+                          });
 
-                      let request = new window.ROSLIB.ServiceRequest({});
-                    
-                      startMappingClient.callService(request, function(result) {
-                        console.log('Result for the start_mapping service call: ' + result);
-                      });
+                          let request = new window.ROSLIB.ServiceRequest({});
+                        
+                          startMappingClient.callService(request, function(result) {
+                            console.log('Result for the start_mapping service call: ' + result);
+                          });
 
-                    }
-                    else {
-                      alert("Connection to ROS failed.");
-                    }
+                        }
+                        else {
+                          alert("Connection to ROS failed.");
+                        }
 
-                  }}
-                >
-                  Start
-                </Button>
+                      }}
+                    >
+                      Start
+                    </Button>
+
+                    <Button size="large" variant="contained" color="primary"
+                      classes={{label: classes.label, root: classes.restart}}
+                      onClick={() => {
+                        
+                        if (props.connected) {
+
+                          // Calling start_navigation service
+                          let startNavigationClient = new window.ROSLIB.Service({
+                            ros : props.rosConnection,
+                            name : '/vva_robot_management/start_navigation',
+                            serviceType : 'std_srvs/Empty'
+                          });
+
+                          let request2 = new window.ROSLIB.ServiceRequest({});
+                        
+                          startNavigationClient.callService(request2, function(result) {
+                            console.log('Result for the start_Navigation service call: ' + result);
+                          });
+                        
+                          stateBTN = 2;
+                          someMethod(2);
+                      
+                        }
+                        else {
+                          alert("Connection to ROS failed.");
+                        }
+
+                      }}
+                    >
+                      Nav
+                    </Button>
+                </div>
                 :
                 <div>
                   <Button size="large" variant="contained" color="primary"

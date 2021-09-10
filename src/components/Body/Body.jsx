@@ -21,6 +21,7 @@ export default function Body(props) {
     setState(param);
     }
 
+    console.log("estado: ");
     console.log(state);
   
   
@@ -38,6 +39,7 @@ export default function Body(props) {
 
   // Hook to update the DOM 
   let [vvaRMStatusHook, setVvaRMStatusHook] = useState(VVA_RM_IDLE);
+
 
   useEffect(() => {
 
