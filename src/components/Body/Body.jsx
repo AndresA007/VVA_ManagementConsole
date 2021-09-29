@@ -7,9 +7,6 @@ import RSP from "../../responsive";
 import ControlButtons from "./ControlButtons";
 import { Button } from "@material-ui/core";
 
-//const variable=props.variable;
-  //console.log(variable);
-
 
 let VVA_RM_IDLE = 0;  
 
@@ -23,13 +20,7 @@ export default function Body(props) {
 
     console.log("estado: ");
     console.log(state);
-  
-  
 
-  //const [estadoMap, setEMap] = useState(1); //Saber cual es el estado para cambiar de mapa
-
-  //let variable=props.variable;
-  //console.log(variable);
 
   // Hook for rosbridge connection
   const [isConnected, setConnected] = useState(false);
@@ -122,27 +113,6 @@ export default function Body(props) {
       }
     }
   };
-
-  // Render the body
-  // const mobileBody = () => (
-  //   <div>
-  //     {isConnected ?
-  //       <Map rosConnection={props.rosConnection} isMobile={isMobile} /> :
-  //       <div style={styles.mobile.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
-  //     }
-  //     <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="512" imageHeight="384" isMobile={isMobile} />
-  //   </div>
-  // );
-
-  // const desktopBody = () => (
-  //   <div>
-  //     {isConnected ?
-  //       <Map rosConnection={props.rosConnection} isMobile={isMobile} /> :
-  //       <div style={styles.desktop.errorMessage}>Failed to connect to rosbridge_server ({props.rosConnection.socket.url}).</div>
-  //     }
-  //     <LiveVideo webVideoServerAddress={props.videoServer} imageWidth="448" imageHeight="336" isMobile={isMobile} />
-  //   </div>
-  // );
 
   return (
     <div>

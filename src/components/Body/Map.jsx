@@ -51,11 +51,8 @@ export default function Map(props) {
     });
     poseListener.subscribe(function(pose) {        //cambia de posicion 
       // update the robots position on the map
-      robotIcon.x = pose.position.x;      // ********* buscar donde se utilizan 
+      robotIcon.x = pose.position.x;      
       robotIcon.y = -pose.position.y;
-
-      //console.log("x:" + robotIcon.x);   // *******
-      //console.log("y:" + robotIcon.y);
       
       // change the angle
       robotIcon.rotation = stage.rosQuaternionToGlobalTheta(pose.orientation);

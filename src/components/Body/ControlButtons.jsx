@@ -128,15 +128,6 @@ export default function ControlButtons(props) {
       }
     }
   };
-
-  /*
-      <Button size="large" variant="contained" color="primary"
-          classes={{label: classes.label, root: classes.prueba}}
-          onClick={someMethod}
-        >
-          Start
-        </Button>
-  */
   
 
   return (
@@ -250,8 +241,6 @@ export default function ControlButtons(props) {
 
                       
                       if (props.connected) {
-
-                        //ReactDOM.render(<Body variable = "texto" />, document.getElementById('root'));
 
                         // Calling reset rtabmap map
                         let resetMapClient = new window.ROSLIB.Service({

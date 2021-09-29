@@ -124,11 +124,8 @@ export default function MapPatrolling(props) {
     });
     poseListener.subscribe(function(pose) {        //cambia de posicion 
       // update the robots position on the map
-      robotIcon.x = pose.position.x;      // ********* buscar donde se utilizan 
+      robotIcon.x = pose.position.x;      
       robotIcon.y = -pose.position.y;
-
-      //console.log("x:" + robotIcon.x);   // *******
-      //console.log("y:" + robotIcon.y);
       
       // change the angle
       robotIcon.rotation = stage.rosQuaternionToGlobalTheta(pose.orientation);
@@ -223,16 +220,6 @@ export default function MapPatrolling(props) {
           clickedPolygon = true;
         };
 
-        /*
-        var lineCallBack = function(type, event, index) {
-          if (type === 'mousedown') {
-            
-                if (event.nativeEvent.ctrlKey === true) {
-                  polygon.splitLine(index);
-                }
-          }
-          clickedPolygon = true;
-        }; */
 
         // Create the polygon
         var polygon = new window.ROS2D.PolygonMarker({
@@ -271,9 +258,6 @@ export default function MapPatrolling(props) {
               
               posx = (pos.x);
               posy = (-pos.y); //El menos porque sin el, lo toma contrario
-
-              //console.log(posx);
-              //console.log(posy);
 
               console.log(pos); 
 
@@ -403,188 +387,9 @@ export default function MapPatrolling(props) {
         }
         // ------------------
         
-        // ------------------
-
-        /*
-        let poseIni;
-        let headerPI;
-
-        let arregloPI = new Array(36); //Crea un arreglo de 36 posiciones
-
-        //Generar la posición inicial, para darle ubicación al robot
-        if(sPI === 2){
-
-
-              let arregloPI2 = arregloPI.fill(0); //llena el arreglo de ceros
-
-              arregloPI2[0] = 0.25;
-              arregloPI2[7] = 0.25;
-              arregloPI2[35] = 0.06853892326654787;
-
-              console.log("posss:"+coord);
-
-              poseIni = { pose : {position: pos,
-                orientation: {x: 0, y: 0,z: 0, w: 0}
-              },
-                      covariance: arregloPI2 
-                      
-              }
-
-              headerPI = { frame_id: "map"//,
-                          //stamp: JS_timestamp
-
-              }
-
-              console.log("pose:"+poseIni);
-
-                // Publishing a Topic   ---> Para dar una posicion de referencia o inicial
-                // ------------------
-
-                var initialPose = new window.ROSLIB.Topic({
-                  ros : props.rosConnection,
-                  name : '/initialpose',
-                  messageType : 'geometry_msgs/PoseWithCovarianceStamped'
-                });
-
-                var PoseWithCovarianceStamped = new window.ROSLIB.Message({
-                header : headerPI,
-                pose : poseIni
-                });
-
-                console.log("Publishing initialPose");
-                initialPose.publish(PoseWithCovarianceStamped);
-
-                sPIni(0);
-
-        }
-*/
-        // ------------------
         
 
-    
-    //var cont2 = 0;
-    //var cont3 = 1;
-
-    /*
-    function arrayCoor(c){  // ------------------------------------------------
-      
-      console.log(coord.length);
-      
-      while(cont2 < coord.length){
-
-        console.log(coord[cont2]);
-
-        cont2 ++;
-      }
-      
-      return;
-    } */
-
-    
-
-    /*
-
-    function tourMapPoint(){
-
-
-        let c = coord;
-
-        console.log(c.length);
-
-        while(cont <= c.length){
-
-          console.log("hola");
-
-          poseFramed = { pose:{     position: c[cont],
-                                    orientation: {x: 0, y: 0,z: 0, w: 0}
-                                  },
-                            frame: "map"
-
-          }
-          poseFramed2.push(poseFramed);
-          cont++;
-        }
-
-          let startItineraryClient = new window.ROSLIB.Service({
-            ros : props.rosConnection,
-            name : '/vva_navigation_intent/start_itinerary',
-            serviceType : 'vva_user_intent/VVAGoalsItinerary'
-          });
-
-          
-          let request = new window.ROSLIB.ServiceRequest({
-            goals : poseFramed2,
-          
-          });
-        
-          startItineraryClient.callService(request, function(result) {
-                console.log('Result for service call on startItinerary:'
-                + result);
-                });
-
-          cont = 0;
-          statePoints = 0;
-      
-      return;
-    }
-    */
-
-    /*
-    // Se indica el numero de puntos a tomar:
-
-    function tourMapPoint(c){
-
-      //{x:0.9,y:0.6,z:0}
-
-      while(cont3 == 5){
-
-        console.log(c.length);
-
-        while(cont <= c.length){
-
-          console.log("hola");
-
-          poseFramed = { pose:{     position: c[cont],
-                                    orientation: {x: 0, y: 0,z: 0, w: 0}
-                                  },
-                            frame: "map"
-
-          }
-          poseFramed2.push(poseFramed);
-          cont++;
-        }
-
-          let startItineraryClient = new window.ROSLIB.Service({
-            ros : props.rosConnection,
-            name : '/vva_navigation_intent/start_itinerary',
-            serviceType : 'vva_user_intent/VVAGoalsItinerary'
-          });
-
-          
-          let request = new window.ROSLIB.ServiceRequest({
-            goals : poseFramed2,
-          
-          });
-        
-          startItineraryClient.callService(request, function(result) {
-                console.log('Result for service call on startItinerary:'
-                + result);
-                });
-
-                cont3 = 0;
-        }
-
-        cont3 ++;
-
-      
-      return;
-    }
-    */
-
-    //*********** */
-
-
-    // setup a listener for the ROS status topic                      /********** */
+    // setup a listener for the ROS status topic                    
     let vvaRMStatusListener = new window.ROSLIB.Topic({
       ros : props.rosConnection,
       name : '/vva_robot_management/status',
@@ -768,32 +573,6 @@ export default function MapPatrolling(props) {
     arregloPI2[7] = 0.25;
     arregloPI2[35] = 0.06853892326654787;
 
-    /*
- 
-    let ai = posPIx/2;
-    let aj = posPIy/2;
-    let ak = 0;
-  
-    let ai = posPIx2;
-    let aj = posPIy2;
-    let ak = 0;
-   
-    let ci = Math.cos(ai);
-    let si = Math.sin(ai);
-    let cj = Math.cos(aj);
-    let sj = Math.sin(aj);
-    let ck = Math.cos(ak);
-    let sk = Math.sin(ak);
-    let cc = ci*ck;
-    let cs = ci*sk;
-    let sc = si*ck;
-    let ss = si*sk;
-
-    quaternion[0] = cj*(cs + sc)
-    quaternion[1] = sj*(cc + ss)
-    quaternion[2] = sj*(cs - sc)
-    quaternion[3] = cj*(cc - ss)
-     */
 
     /* ACOMODAR ORIENTACION SEGUN EL CUADRANTE  */
     
@@ -801,7 +580,7 @@ export default function MapPatrolling(props) {
     console.log(anguloPI);
 
 
-    let zo = -(Math.sin(anguloPI/2));  //Funciono colocandole estos signos negativos lo de la orientación
+    let zo = -(Math.sin(anguloPI/2));  //Funciono colocandole estos signos negativos a lo de la orientación
     let wo = -(Math.cos(anguloPI/2));
     
     console.log(zo);
@@ -814,21 +593,14 @@ export default function MapPatrolling(props) {
     
     // ------
 
-    //console.log(arregloPI2);
 
     var currentTime = new Date();
     var secs = Math.floor(currentTime.getTime()/1000);
     var nsecs = Math.round(1000000000*(currentTime.getTime()/1000-secs));
 
-    //console.log(secs);
-    //console.log(nsecs);
 
     poseIni = { pose : {position: posPI,
-      //orientation: {x: 0, y: 0,z: 1, w: anguloPI} //Necesita orientacion para que no de null
-      //orientation: {x: quaternion[0], y: quaternion[1],z: quaternion[2], w: anguloPI}
-      //orientation: {x: posPIx, y: posPIy,z: 0, w: anguloPI} 
-      //orientation: {x: 0, y: 0,z: 0, w: 1.35}
-      //orientation: {x: 0, y: 0, z: zo, w: wo}
+      
       orientation: {x: 0, y: 0, z: zo, w: wo}
     },         //0.5,0.5,0.2
             covariance: arregloPI2 
@@ -869,34 +641,12 @@ export default function MapPatrolling(props) {
 
   function angulosPI(x1, y1, x2, y2){
 
-    //y1 = 0;
-    //x1 = 0;
 
       return (((Math.atan2(y2 - y1, x2 -x1)*180/Math.PI))*(Math.PI/180));
 
   }
   
 
-  /*
-  let float_secs;
-  let secs;
-  let nsecs;
-  
-
-  
-  let timeRos = time.time(){
-
-    float_secs = time.time();  //{}
-    secs = int(float_secs);
-    nsecs = int((float_secs - secs) * 1000000000);
-    return Time(secs, nsecs);
-
-  }
-
-  //Arreglar la posicion inicial, la flecha con la orientacion
-
-
-*/
 
 //************* */
 
@@ -1046,9 +796,6 @@ const classes = useStyles();
 
 
 
-
-
-
 //************** */
 
 
@@ -1091,8 +838,6 @@ const classes = useStyles();
   };
 
  
-
-
 
   //*************** */
 
